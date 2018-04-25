@@ -1,0 +1,9 @@
+.flex_container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.column{
+  width: 50%;
+}
