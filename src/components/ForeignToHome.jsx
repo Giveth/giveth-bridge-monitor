@@ -7,48 +7,35 @@ class ForeignToHome extends Component{
     super(props);
     this.state = {
       withdrawals: [],
-      authorizedPayments: [],
-    };
-    this.findContracts();
+      payments: [],
+    }
+    this.loadEvents()
   }
-
-  findContracts = async () => {
-    const homeContract = this.props.data.homeContract;
-    const foreignContract = this.props.data.foreignContract;
-    const range = this.props.data.blockRange;
-    const promises = [
-      foreignContract.getPastEvents('Withdraw', range),
-      homeContract.getPastEvents('PaymentAuthorized', range),
-    ];
-    Promise.all(promises).then(
-      ([withdrawals,
-        authorizedPayments]) => {this.setState({
-          withdrawals,
-          authorizedPayments
-        });
-      }
-    );
+  loadEvents = async () => {
+    const client = this.props.client;
+    client.service('withdrawals').find().then((withdrawals) => this.setState({withdrawals: withdrawals.data}));
+    client.service('payments').find().then((payments) => this.setState({payments: payments.data}));
   }
 
   render() {
-
     return(
-      <div className = "flex_container">
-        <div className = "column">
-          <h5> Withdrawals </h5>
-          <ul>
-            {this.state.withdrawals.map((withdrawal, idx) => <li key = {idx}>{withdrawal.returnValues.amount}</li>)}
-          </ul>
+      <div>
+        <div className = "flex_container">
+          <div className = "column">
+            <h5> Withdrawals </h5>
+            <ul>
+              {this.state.withdrawals.map((withdrawal) => <li key = {withdrawal._id}>{withdrawal.return.returnValues.amount}</li>)}
+            </ul>
+          </div>
+          <div className = "column">
+            <h5> Authorized Payments </h5>
+            <ul>
+              {this.state.payments.map((payment, idx) => <li key = {payment._id}>{payment.return.returnValues.amount}</li>)}
+            </ul>
+          </div>
         </div>
-        <div className = "column">
-          <h5> Authorized Payments </h5>
-          <ul>
-            {this.state.authorizedPayments.map((payment, idx) => <li key = {idx}>{payment.returnValues.amount}</li>)}
-          </ul>
-        </div>
+
       </div>
-
-
     );
   }
 

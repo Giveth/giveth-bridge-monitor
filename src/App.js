@@ -4,7 +4,7 @@ import BridgeMonitor from './components/BridgeMonitor';
 class App extends Component {
   render() {
     return (
-      <BridgeMonitor/>
+      <BridgeMonitor />
     );
   }
 }
