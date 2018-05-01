@@ -24,9 +24,10 @@
   "scripts": {
     "test": "npm run eslint && npm run mocha",
     "eslint": "eslint src/. test/. --config .eslintrc.json",
-    "start": "node src/",
+    "start": "babel-node ./src/lib/populate && node src/",
     "mocha": "mocha test/ --recursive --exit",
-    "populate": "babel-node ./src/lib/populate"
+    "restart": "rm -r ./data/ && babel-node ./src/lib/populate && node src/",
+    "clean": "rm -r ./data/"
   },
   "dependencies": {
     "@feathersjs/configuration": "^1.0.2",
