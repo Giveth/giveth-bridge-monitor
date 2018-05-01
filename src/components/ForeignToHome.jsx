@@ -24,13 +24,21 @@ class ForeignToHome extends Component{
           <div className = "column">
             <h5> Withdrawals </h5>
             <ul>
-              {this.state.withdrawals.map((withdrawal) => <li key = {withdrawal._id}>{withdrawal.return.returnValues.amount}</li>)}
+              {this.state.withdrawals.map((withdrawal) =>
+                <li key = {withdrawal._id}>
+                  {withdrawal.event.returnValues.amount + (withdrawal.matched ? '\u2714' : 	'\u274C')}
+                </li>
+              )}
             </ul>
           </div>
           <div className = "column">
             <h5> Authorized Payments </h5>
             <ul>
-              {this.state.payments.map((payment, idx) => <li key = {payment._id}>{payment.return.returnValues.amount}</li>)}
+              {this.state.payments.map((payment) =>
+                <li key = {payment._id}>
+                  {payment.event.returnValues.amount + (payment.matched ? '\u2714' : 	'\u274C')}
+                </li>
+              )}
             </ul>
           </div>
         </div>

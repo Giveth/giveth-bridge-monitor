@@ -23,15 +23,21 @@ class HomeToForeign extends Component{
           <div className = "column">
             <h5> Donations </h5>
             <ul>
-              {this.state.donations.map((donation) => <li key = {donation._id}>{
-                 donation.return.returnValues.amount + (donation.giverCreation ? " (Giver Created)" : "")
-              }</li>)}
+              {this.state.donations.map((donation) =>
+                <li key = {donation._id}>
+                 {donation.event.returnValues.amount + (donation.matched ? '\u2714' : 	'\u274C')}
+               </li>
+              )}
             </ul>
           </div>
           <div className = "column">
             <h5> Deposits </h5>
             <ul>
-              {this.state.deposits.map((deposit, idx) => <li key = {deposit._id}>{deposit.return.returnValues.amount}</li>)}
+              {this.state.deposits.map((deposit) =>
+                <li key = {deposit._id}>
+                  {deposit.event.returnValues.amount + (deposit.matched ? '\u2714' : '\u274C')}
+                </li>
+              )}
             </ul>
           </div>
         </div>
