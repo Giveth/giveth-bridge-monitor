@@ -32,7 +32,7 @@ const populate = async () => {
   let updateRange;
   switch (range.total){
     case 0: {
-      console.log('No saved block range found, starting search from first block to home block number ', currentHomeBlock, ' and foreign block number ', currentForeignBlock);
+      //console.log('No saved block range found, starting search from first block to home block number', currentHomeBlock, 'and foreign block number', currentForeignBlock);
       searchRange = {
         home: {
           fromBlock: app.get('homeStart'),
@@ -53,7 +53,7 @@ const populate = async () => {
     case 1: {
       const lastHomeBlockSearched = range.data[0].home;
       const lastForeignBlockSearched = range.data[0].foreign;
-      console.log('Resuming search from home block number ', lastHomeBlockSearched);
+      //console.log('Resuming search from home block number', lastHomeBlockSearched);
       searchRange = {
         home: {
           fromBlock: lastHomeBlockSearched + 1,
@@ -74,7 +74,7 @@ const populate = async () => {
     }
 
     case 2: {
-      // more than one saved range, this is bad and shouldn't happen
+      // more than one saved range, this is bad and shouldn't happen, but need to handle this case.
       break;
     }
 
@@ -99,8 +99,9 @@ const populate = async () => {
     donations.map((donation => {
       recordCreations.push(
         app.service('donations').create({
-          return: donation,
+          event: donation,
           giverCreation: false,
+          matched: false,
         })
       )
     }));
@@ -108,8 +109,9 @@ const populate = async () => {
     donationAndCreations.map((donation => {
       recordCreations.push(
         app.service('donations').create({
-          return: donation,
+          event: donation,
           giverCreation: true,
+          matched: false,
         })
       )
     }));
@@ -117,7 +119,8 @@ const populate = async () => {
     deposits.map((deposit => {
       recordCreations.push(
         app.service('deposits').create({
-          return: deposit,
+          event: deposit,
+          matched: false,
         })
       )
     }));
@@ -125,7 +128,8 @@ const populate = async () => {
     withdrawals.map((withdrawal => {
       recordCreations.push(
         app.service('withdrawals').create({
-          return: withdrawal,
+          event: withdrawal,
+          matched: false,
         })
       )
     }));
@@ -133,7 +137,8 @@ const populate = async () => {
     payments.map((payment => {
       recordCreations.push(
         app.service('payments').create({
-          return: payment,
+          event: payment,
+          matched: false,
         })
       )
     }));
