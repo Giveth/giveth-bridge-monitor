@@ -19,12 +19,6 @@ module.exports = async () => {
   const homeContract = new homeWeb3.eth.Contract(HomeBridgeABI, homeContractAddress);
   const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, foreignContractAddress);
 
-  // const homeWeb3 = new Web3('https://ropsten.infura.io/HDYgcFmpY0f2PqcsSiPB');
-  // const foreignWeb3 = new Web3('https://rinkeby.infura.io/HDYgcFmpY0f2PqcsSiPB');
-  //
-  // const homeContract = new homeWeb3.eth.Contract(HomeBridgeABI, '0x0cB06B291c40c76d7bEe7C9f1fAa4D6A4b338C49');
-  // const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, '0x97bd4e1b4f647ab5f0a8248dd9c7218ce044ced9');
-
   const rangeService = await app.service('range');
   const range = await rangeService.find({
     query: {
@@ -80,7 +74,7 @@ module.exports = async () => {
     }
 
     case 2: {
-      // more than one saved range, this is bad and shouldn't happen, but need to handle this case.
+      // more than one saved range, this is bad and shouldn't happen, but need to handle this case (eventually)
       break;
     }
 
@@ -89,16 +83,19 @@ module.exports = async () => {
     }
 
     let eventPromises = [
-      homeContract.getPastEvents('Donate', searchRange.home),
-      homeContract.getPastEvents('DonateAndCreateGiver', searchRange.home),
-      foreignContract.getPastEvents('Deposit', searchRange.foreign),
-      foreignContract.getPastEvents('Withdraw', searchRange.foreign),
-      homeContract.getPastEvents('PaymentAuthorized', searchRange.home)
+      homeContract.getPastEvents('allEvents', searchRange.home),
+      foreignContract.getPastEvents('allEvents', searchRange.foreign)
     ];
 
-    let donations, donationAndCreations, deposits, withdrawals, payments;
+    let homeEvents, foreignEvents;
 
-    [donations, donationAndCreations, deposits, withdrawals, payments] = await Promise.all(eventPromises);
+    [homeEvents, foreignEvents] = await Promise.all(eventPromises);
+
+    let donations = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
+    let donationAndCreations = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
+    let deposits = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Deposit');
+    let withdrawals = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
+    let payments = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
 
     let recordCreations = [];
 
