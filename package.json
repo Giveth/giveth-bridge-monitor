@@ -24,9 +24,9 @@
   "scripts": {
     "test": "npm run eslint && npm run mocha",
     "eslint": "eslint src/. test/. --config .eslintrc.json",
-    "start": "babel-node ./src/lib/populate && node src/",
+    "start": "node src/",
+    "testnet": "NODE_ENV=testnet node src/",
     "mocha": "mocha test/ --recursive --exit",
-    "restart": "rm -r ./data/ && babel-node ./src/lib/populate && node src/",
     "clean": "rm -r ./data/"
   },
   "dependencies": {

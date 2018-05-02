@@ -5,13 +5,19 @@ const HomeBridgeABI = HomeBridgeContract.GivethBridgeAbi;
 const ForeignBridgeContract = require('giveth-bridge/build/contracts/ForeignGivethBridge.sol.js');
 const ForeignBridgeABI = ForeignBridgeContract.ForeignGivethBridgeAbi;
 
-const populate = async () => {
+module.exports = async () => {
 
-  const homeWeb3 = new Web3('http://localhost:8545');
-  const foreignWeb3 = new Web3('http://localhost:8546');
+  const homeNodeURL = app.get('homeNodeURL');
+  const foreignNodeURL = app.get('foreignNodeURL');
 
-  const homeContract = new homeWeb3.eth.Contract(HomeBridgeABI, '0x28337E63a325AEfc6C59E0f5f43Fc87943A3714a');
-  const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, '0x654a5675Ce63c03abF9b17864a96dBE29a392454');
+  const homeWeb3 = new Web3(homeNodeURL);
+  const foreignWeb3 = new Web3(foreignNodeURL);
+
+  const homeContractAddress = app.get('homeContractAddress');
+  const foreignContractAddress = app.get('foreignContractAddress');
+
+  const homeContract = new homeWeb3.eth.Contract(HomeBridgeABI, homeContractAddress);
+  const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, foreignContractAddress);
 
   // const homeWeb3 = new Web3('https://ropsten.infura.io/HDYgcFmpY0f2PqcsSiPB');
   // const foreignWeb3 = new Web3('https://rinkeby.infura.io/HDYgcFmpY0f2PqcsSiPB');
@@ -35,11 +41,11 @@ const populate = async () => {
       //console.log('No saved block range found, starting search from first block to home block number', currentHomeBlock, 'and foreign block number', currentForeignBlock);
       searchRange = {
         home: {
-          fromBlock: app.get('homeStart'),
+          fromBlock: app.get('homeStartBlock'),
           toBlock: currentHomeBlock,
         },
         foreign: {
-          fromBlock: app.get('foreignStart'),
+          fromBlock: app.get('foreignStartBlock'),
           toBlock: currentForeignBlock,
         }
       }
@@ -57,11 +63,11 @@ const populate = async () => {
       searchRange = {
         home: {
           fromBlock: lastHomeBlockSearched + 1,
-          toBlock: 'latest',
+          toBlock: currentHomeBlock,
         },
         foreign: {
           fromBlock: lastForeignBlockSearched + 1,
-          toBlock: 'latest',
+          toBlock: currentForeignBlock,
         }
       }
 
@@ -147,5 +153,3 @@ const populate = async () => {
     await Promise.resolve(updateRange);
 
 }
-
-populate();

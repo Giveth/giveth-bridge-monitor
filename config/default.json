@@ -6,7 +6,11 @@
     "default": 10,
     "max": 50
   },
-  "nedb": "../data",
-  "homeStart" : 0,
-  "foreignStart" : 0
+  "nedb" : "../data",
+  "homeStartBlock" :  0,
+  "foreignStartBlock": 0,
+  "homeNodeURL": "http://localhost:8545",
+  "foreignNodeURL": "http://localhost:8546",
+  "homeContractAddress" : "0x28337E63a325AEfc6C59E0f5f43Fc87943A3714a",
+  "foreignContractAddress" : "0x654a5675Ce63c03abF9b17864a96dBE29a392454"
 }
