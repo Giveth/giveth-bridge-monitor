@@ -15,6 +15,7 @@ class ForeignToHome extends Component{
     const client = this.props.client;
     client.service('withdrawals').find().then((withdrawals) => this.setState({withdrawals: withdrawals.data}));
     client.service('payments').find().then((payments) => this.setState({payments: payments.data}));
+    setTimeout(this.loadEvents, 1000);
   }
 
   render() {
