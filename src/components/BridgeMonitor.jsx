@@ -5,7 +5,6 @@ import HomeToForeign from './HomeToForeign';
 import ForeignToHome from './ForeignToHome';
 
 import feathers from '@feathersjs/client';
-import socketio from '@feathersjs/socketio-client';
 import io from 'socket.io-client';
 
 class BridgeMonitor extends Component{
@@ -13,9 +12,9 @@ class BridgeMonitor extends Component{
   constructor(props){
     super(props);
 
-    const socket = io('http://localhost:3030');
+    const socket = io('https://feathers.bridge.giveth.io/');
     const client = feathers();
-    client.configure(socketio(socket)); 
+    client.configure(feathers.socketio(socket)); 
     this.state = {
       client,
     };
