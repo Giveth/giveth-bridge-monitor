@@ -3,7 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import HomeToForeign from './HomeToForeign';
 import ForeignToHome from './ForeignToHome';
-
+import config from '../configuration';
 import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
 
@@ -12,7 +12,7 @@ class BridgeMonitor extends Component{
   constructor(props){
     super(props);
 
-    const socket = io('https://feathers.bridge.giveth.io/');
+    const socket = io(config.feathersConnection);
     const client = feathers();
     client.configure(feathers.socketio(socket)); 
     this.state = {
@@ -27,10 +27,22 @@ class BridgeMonitor extends Component{
     client.service('withdrawals').find().then((withdrawals) => this.setState({withdrawals: withdrawals.data}));
     client.service('payments').find().then((payments) => this.setState({payments: payments.data}));
   }
+  test = () => {
+    const donations = this.state.donations;
+    const deposits = this.state.deposits;
 
+    const testDuplicates = deposits.filter((deposit) => {
+      return deposit.event.returnValues.homeTx === '0x482d92eb1bbc810535922c18d8d9ca722a8ffd7d32c3b57b14cbe84cf7e4d7a3';
+    });
+    console.log(testDuplicates);
+    console.log(this.state.withdrawals);
+    console.log(this.state.payments);
+
+  }
   render(){
     return (
       <div>
+        <button onClick = {this.test}>Do it</button>
         <Tabs forceRenderTabPanel = {true}>
 
           <TabList>
