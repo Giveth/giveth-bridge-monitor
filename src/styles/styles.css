@@ -6,4 +6,13 @@
 
 .column{
   width: 50%;
+  padding: 1em;
+}
+
+/* .ReactTable .rt-thead .rt-resizable-header{
+  overflow: hidden;
+} */
+
+.ReactTable .rt-thead [role="columnheader"] {
+outline: 0;
 }
