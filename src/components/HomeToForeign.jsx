@@ -64,11 +64,10 @@ class HomeToForeign extends Component{
             id: 'hashes',
             Header: 'Hash',
             accessor: datum => datum.event.transactionHash,
-            width: 450
           },
           {
             id: 'amount',
-            Header: 'Amount',
+            Header: 'Amount (ETH)',
             accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount)
           },
           {
@@ -113,7 +112,7 @@ class HomeToForeign extends Component{
               pageSize = {this.state.donations.length}
               getTrProps = {this.getTrProps}
               SubComponent = {row => (
-                <EventDetail/>
+                <EventDetail data = {row.original}/>
               )}/>
           </div>
           <div className = "column">
