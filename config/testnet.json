@@ -2,7 +2,7 @@
   "homeStartBlock" :  3000000,
   "foreignStartBlock": 2000000,
   "homeNodeURL": "https://ropsten.infura.io/HDYgcFmpY0f2PqcsSiPB",
-  "foreignNodeURL": "https://rinkeby.infura.io/HDYgcFmpY0f2PqcsSiPB",
+  "foreignNodeURL": "https://rinkeby.giveth.io",
   "homeContractAddress" : "0x0cB06B291c40c76d7bEe7C9f1fAa4D6A4b338C49",
   "foreignContractAddress" : "0x97bd4e1b4f647ab5f0a8248dd9c7218ce044ced9"
 }
