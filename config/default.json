@@ -3,8 +3,8 @@
   "port": 3030,
   "public": "../public/",
   "paginate": {
-    "default": 50,
-    "max": 150
+    "default": 60,
+    "max": 300
   },
   "nedb" : "../data",
   "pollTime": 3000,

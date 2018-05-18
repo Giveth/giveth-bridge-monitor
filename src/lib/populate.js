@@ -1,5 +1,6 @@
 const app = require('../app');
 const Web3 = require('web3');
+const link = require('./helpers/link');
 const HomeBridgeContract = require('giveth-bridge/build/contracts/GivethBridge.sol.js');
 const HomeBridgeABI = HomeBridgeContract.GivethBridgeAbi;
 const ForeignBridgeContract = require('giveth-bridge/build/contracts/ForeignGivethBridge.sol.js');
@@ -91,62 +92,88 @@ module.exports = async () => {
 
     [homeEvents, foreignEvents] = await Promise.all(eventPromises);
 
-    let donations = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
-    let donationAndCreations = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
-    let deposits = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Deposit');
-    let withdrawals = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
-    let payments = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
+    let donationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
+    let donationAndCreationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
+    let depositEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Deposit');
+    let withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
+    let paymentEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
 
     let recordCreations = [];
 
-    donations.map((donation => {
-      recordCreations.push(
+    let donationPromises = [];
+    let depositPromises = [];
+    let withdrawalPromises = [];
+    let paymentPromises = [];
+
+    donationEvents.map((donation => {
+      donationPromises.push(
         app.service('donations').create({
           event: donation,
           giverCreation: false,
           matched: false,
+          matches: [],
+          hasDuplicates: false,
         })
-      )
+      );
     }));
 
-    donationAndCreations.map((donation => {
-      recordCreations.push(
+    donationAndCreationEvents.map((donation => {
+      donationPromises.push(
         app.service('donations').create({
           event: donation,
           giverCreation: true,
           matched: false,
+          matches: [],
+          hasDuplicates: false,
         })
       )
     }));
-
-    deposits.map((deposit => {
-      recordCreations.push(
+    //
+    depositPromises = depositEvents.map((deposit => {
+      return (
         app.service('deposits').create({
           event: deposit,
           matched: false,
+          matches: [],
+          hasDuplicates: false,
         })
-      )
+      );
     }));
 
-    withdrawals.map((withdrawal => {
-      recordCreations.push(
+    withdrawalPromises = withdrawalEvents.map((withdrawal => {
+      return(
         app.service('withdrawals').create({
           event: withdrawal,
           matched: false,
+          matches: [],
+          hasDuplicates: false,
         })
       )
     }));
 
-    payments.map((payment => {
-      recordCreations.push(
+    paymentPromises = paymentEvents.map((payment => {
+      return(
         app.service('payments').create({
           event: payment,
           matched: false,
+          matches: [],
+          hasDuplicates: false,
         })
       )
     }));
 
-    await Promise.all(recordCreations);
+    let donations = Promise.all(donationPromises);
+    let deposits = Promise.all(depositPromises);
+    let withdrawals = Promise.all(withdrawalPromises);
+    let payments = Promise.all(paymentPromises);
+
+    [ donations,
+      deposits,
+      withdrawals,
+      payments ] = await Promise.all([ donations, deposits, withdrawals, payments]);
+
+    // Link donations and deposits
+    await link(donations, deposits, withdrawals, payments);
     await Promise.resolve(updateRange);
 
 }
