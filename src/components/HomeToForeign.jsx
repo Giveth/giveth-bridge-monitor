@@ -32,11 +32,26 @@ class HomeToForeign extends Component{
     });
     //setTimeout(this.loadEvents, 1000);
   }
-  getTrProps = (state, rowInfo, instance) => {
-    if (rowInfo) {
+  getRowColor = (row) => {
+    let color;
+    if (!row.original.matched) {
+      color = 'rgba(176, 0, 0, 0.5)';
+    }
+    else if (row.original.hasDuplicates) {
+      color = 'rgba(242, 210, 0, 0.5)';
+    }
+    else {
+      color = 'rgba(85, 176, 0, 0.5)';
+    }
+    return color;
+  }
+
+  getTrProps = (state, row, instance) => {
+    if (row) {
+
       return {
         style: {
-          background: rowInfo.original.matched? 'rgba(85, 176, 0, 0.5)' : 'rgba(176, 0, 0, 0.5)',
+          background: this.getRowColor(row),
           //border: rowInfo.original.matched? '1px solid green' : '1px solid red',
           color: 'rgba(24, 24, 24, 0.8)'
         }
@@ -44,7 +59,17 @@ class HomeToForeign extends Component{
     }
     return {};
   }
+  rankByError = (data) => {
+    let rank;
+    const matched = data.matched;
+    const duplicated = data.hasDuplicates;
 
+    if (!matched) rank = 0;
+    else if (duplicated) rank = 1;
+    else rank = 2;
+
+    return rank;
+  }
   render() {
     const donationColumns = [
       {
@@ -54,8 +79,8 @@ class HomeToForeign extends Component{
           {
             id: 'matched',
             Header: () => <span> {'\u2714'} </span>,
-            accessor: datum => datum.matched,
-            Cell: row => <span> {row.original.matched? '\u2714' : 	'\u2716'} </span>,
+            accessor: datum => this.rankByError(datum),
+            Cell: row => <span> {(row.original.matched && !row.original.hasDuplicates)? '\u2714' : 	'\u2716'} </span>,
             width: 25,
             resizable: false,
             filterable: false,
@@ -77,27 +102,42 @@ class HomeToForeign extends Component{
           }]
       }
     ];
+
     const depositColumns = [
       {
         Header: 'Foreign Deposits',
         headerClassName: 'deposits',
-        columns: [{
-          id: 'hashes',
-          Header: 'Hash',
-          accessor: datum => datum.event.transactionHash
-        },
-        {
-          id: 'amount',
-          Header: 'Amount',
-          accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount)
-        },
-        {
-          id: 'matched',
-          Header: 'Matched',
-          accessor: datum => datum.matched ? "good" : "bad",
-        }]
+        columns: [
+          {
+            id: 'matched',
+            Header: () => <span> {'\u2714'} </span>,
+            accessor: datum => this.rankByError(datum),
+            Cell: row => <span> {(row.original.matched && !row.original.hasDuplicates)? '\u2714' : 	'\u2716'} </span>,
+            width: 25,
+            resizable: false,
+            filterable: false,
+          },
+          {
+            id: 'hashes',
+            Header: 'Hash',
+            accessor: datum => datum.event.transactionHash,
+          },
+          {
+            id: 'amount',
+            Header: 'Amount (ETH)',
+            accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount)
+          },
+          {
+            id: 'block',
+            Header: 'Block #',
+            accessor: datum => datum.event.blockNumber.toLocaleString()
+          }]
       }
     ];
+
+    const donationDuplicateMessage = 'This donation event has multiple deposits that reference it as their home transaction!';
+    const depositDuplicateMessage = 'The home transaction of this deposit has other deposits that also reference it!';
+
     return(
       <div>
         <div className = "flex_container">
@@ -111,8 +151,14 @@ class HomeToForeign extends Component{
               filterable = {true}
               pageSize = {this.state.donations.length}
               getTrProps = {this.getTrProps}
+              defaultSorted = {[
+                {
+                  id: 'block',
+                  desc: true
+                }
+              ]}
               SubComponent = {row => (
-                <EventDetail data = {row.original}/>
+                <EventDetail data = {row.original} duplicateMessage = {donationDuplicateMessage} borderColor = {this.getRowColor(row)}/>
               )}/>
           </div>
           <div className = "column">
@@ -124,8 +170,15 @@ class HomeToForeign extends Component{
               sortable = {true}
               filterable = {true}
               pageSize = {this.state.deposits.length}
+              getTrProps = {this.getTrProps}
+              defaultSorted = {[
+                {
+                  id: 'block',
+                  desc: true
+                }
+              ]}
               SubComponent = {row => (
-                <h5> [Any event related info could be put here]</h5>
+                <EventDetail data = {row.original} duplicateMessage = {depositDuplicateMessage} borderColor = {this.getRowColor(row)}/>
               )}/>
           </div>
         </div>

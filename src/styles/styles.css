@@ -12,16 +12,22 @@ body {
   margin: 1em;
 }
 
-.event-container{
+.event-subcontainer{
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  padding: 1em;
   margin: 1em;
 }
 
 .event-name{
   text-align: center;
   margin-bottom: 1em;
+}
+.error-warning{
+  text-align: center;
+  margin-bottom: 1em;
+  font-weight: bold;
 }
 .column{
   width: 50%;

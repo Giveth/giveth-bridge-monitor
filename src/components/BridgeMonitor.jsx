@@ -22,10 +22,15 @@ class BridgeMonitor extends Component{
   }
   loadEvents = async () => {
     const client = this.state.client;
-    client.service('donations').find().then((donations) => this.setState({donations: donations.data}));
-    client.service('deposits').find().then((deposits) => this.setState({deposits: deposits.data}));
-    client.service('withdrawals').find().then((withdrawals) => this.setState({withdrawals: withdrawals.data}));
-    client.service('payments').find().then((payments) => this.setState({payments: payments.data}));
+    const query = {
+      query: {
+        paginate: false,
+      }
+    }
+    client.service('donations').find(query).then((donations) => this.setState({donations: donations.data}));
+    client.service('deposits').find(query).then((deposits) => this.setState({deposits: deposits.data}));
+    client.service('withdrawals').find(query).then((withdrawals) => this.setState({withdrawals: withdrawals.data}));
+    client.service('payments').find(query).then((payments) => this.setState({payments: payments.data}));
   }
 
   render(){
