@@ -28,7 +28,7 @@
     "testnet": "NODE_ENV=testnet node src/",
     "mocha": "mocha test/ --recursive --exit",
     "clean": "rm -r ./data/",
-    "run": "pm2 startOrRestart ecosystem.config.js --env production"
+    "serve": "pm2 startOrRestart ecosystem.config.js --env production"
   },
   "dependencies": {
     "@feathersjs/configuration": "^1.0.2",
