@@ -5,9 +5,69 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [async (context) => {
+
+      const hash = context.data.event.transactionHash;
+
+      const deposits = await context.app.service('deposits').find({
+        query: {
+          'event.returnValues.homeTx': hash,
+        }
+      });
+
+      if (deposits.total === 0) return context;
+      const hasDuplicates = (deposits.total > 1);
+
+      deposits.data.map((deposit) => {
+        const match = {
+          hash: deposit.event.transactionHash,
+          patch: !hasDuplicates,
+        };
+        context.data.matches.push(match);
+        context.data.matched = true;
+        context.data.hasDuplicates = hasDuplicates;
+        context.app.service('deposits').patch(deposit._id, {
+          matched: true,
+          hasDuplicates,
+        });
+      });
+
+      return context;
+    }],
     update: [],
-    patch: [],
+    patch: [
+      async (context) => {
+
+
+        const hasDuplicates = context.data.hasDuplicates;
+        // if the donation doesn't have any duplicates nothing needs to be done here
+        if (!hasDuplicates) return context;
+
+        const matches = context.data.matches;
+        let depositToPatch;
+        let index;
+        // find any deposits that aren't already flagged as duplicates
+        // (there SHOULD only be one, and it SHOULD be the first, but this is a safeguard)
+        for (let i = 0; i < matches.length; i++){
+          if (matches[i].patch) {
+            depositToPatch = matches[i].hash;
+            index = i;
+            break;
+          }
+        }
+        // none of the matches need to patched, so bail
+        if (!depositToPatch) return context;
+
+        await context.app.service('deposits').patch(depositToPatch, {
+          hasDuplicates: true,
+        });
+        context.data.matches[index].patch = false;
+
+
+        return context;
+
+      }
+    ],
     remove: []
   },
 

@@ -1,6 +1,7 @@
 const app = require('../app');
 const Web3 = require('web3');
-const link = require('./helpers/link');
+const asyncForEach = require('./helpers/asyncForEach');
+
 const HomeBridgeContract = require('giveth-bridge/build/contracts/GivethBridge.sol.js');
 const HomeBridgeABI = HomeBridgeContract.GivethBridgeAbi;
 const ForeignBridgeContract = require('giveth-bridge/build/contracts/ForeignGivethBridge.sol.js');
@@ -11,29 +12,48 @@ module.exports = async () => {
   const homeNodeURL = app.get('homeNodeURL');
   const foreignNodeURL = app.get('foreignNodeURL');
 
+  console.log('Creating Web3 objects...');
   const homeWeb3 = new Web3(homeNodeURL);
   const foreignWeb3 = new Web3(foreignNodeURL);
+  console.log('Success!');
 
   const homeContractAddress = app.get('homeContractAddress');
   const foreignContractAddress = app.get('foreignContractAddress');
 
+  console.log('Creating contract instances...');
   const homeContract = new homeWeb3.eth.Contract(HomeBridgeABI, homeContractAddress);
   const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, foreignContractAddress);
+  console.log('Success!');
 
-  const rangeService = await app.service('range');
-  const range = await rangeService.find({
+  console.log('Retrieving any stored block range...');
+  const range = await app.service('range').find({
     query: {
-      _id: 1,
+      _id: 1
     }
   });
-  const currentHomeBlock = await homeWeb3.eth.getBlockNumber();
+  console.log('Success!');
+
+  console.log('Getting current home block number...');
+  let currentHomeBlock;
+  try {
+    currentHomeBlock = await homeWeb3.eth.getBlockNumber();
+  } catch (error){
+    console.log('Funky error getting home block number from infura:');
+    console.log(error);
+    return true;
+  }
+  console.log('Success!');
+
+  console.log('Getting current foreign block number...');
   const currentForeignBlock = await foreignWeb3.eth.getBlockNumber();
+  console.log('Success!');
 
   let searchRange;
   let updateRange;
   switch (range.total){
     case 0: {
-      //console.log('No saved block range found, starting search from first block to home block number', currentHomeBlock, 'and foreign block number', currentForeignBlock);
+      console.log('No saved block range found');
+      console.log('Begining from configured start blocks to current blocks');
       searchRange = {
         home: {
           fromBlock: app.get('homeStartBlock'),
@@ -54,14 +74,34 @@ module.exports = async () => {
     case 1: {
       const lastHomeBlockSearched = range.data[0].home;
       const lastForeignBlockSearched = range.data[0].foreign;
-      //console.log('Resuming search from home block number', lastHomeBlockSearched);
+      let nextHomeStartBlock, nextForeignStartBlock;
+
+      // Prevent searching from a starting block past the current toBlock
+      // though web3 doesn't seem to mind
+      if (
+        lastHomeBlockSearched === currentHomeBlock &&
+        lastForeignBlockSearched === currentForeignBlock
+      ) {
+        console.log('No new blocks since last poll, stopping')
+        return true;
+      }
+
+      if (lastHomeBlockSearched === currentHomeBlock) {
+        nextHomeStartBlock = currentHomeBlock;
+      } else {nextHomeStartBlock = lastHomeBlockSearched + 1}
+
+      if (lastForeignBlockSearched === currentForeignBlock) {
+        nextForeignStartBlock = currentForeignBlock;
+      } else {nextForeignStartBlock = lastForeignBlockSearched + 1}
+
+      console.log('Resuming from home block', nextHomeStartBlock, 'and foreign block', nextForeignStartBlock);
       searchRange = {
         home: {
-          fromBlock: lastHomeBlockSearched + 1,
+          fromBlock: nextHomeStartBlock,
           toBlock: currentHomeBlock,
         },
         foreign: {
-          fromBlock: lastForeignBlockSearched + 1,
+          fromBlock: nextForeignStartBlock,
           toBlock: currentForeignBlock,
         }
       }
@@ -75,7 +115,7 @@ module.exports = async () => {
     }
 
     case 2: {
-      // more than one saved range, this is bad and shouldn't happen, but need to handle this case (eventually)
+      console.log('Multiple block ranges found! This is bad and should never happen');
       break;
     }
 
@@ -83,6 +123,7 @@ module.exports = async () => {
 
     }
 
+    console.log('Getting past events...');
     let eventPromises = [
       homeContract.getPastEvents('allEvents', searchRange.home),
       foreignContract.getPastEvents('allEvents', searchRange.foreign)
@@ -91,6 +132,7 @@ module.exports = async () => {
     let homeEvents, foreignEvents;
 
     [homeEvents, foreignEvents] = await Promise.all(eventPromises);
+    console.log('Success!');
 
     let donationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
     let donationAndCreationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
@@ -98,82 +140,60 @@ module.exports = async () => {
     let withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
     let paymentEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
 
-    let recordCreations = [];
+    await asyncForEach(depositEvents, async (deposit) => {
+      await app.service('deposits').create({
+        event: deposit,
+        matched: false,
+        matches: [],
+        hasDuplicates: false,
+        _id: deposit.transactionHash,
+      });
+    });
 
-    let donationPromises = [];
-    let depositPromises = [];
-    let withdrawalPromises = [];
-    let paymentPromises = [];
+    await asyncForEach(donationEvents, async (donation) => {
+      await app.service('donations').create({
+        event: donation,
+        giverCreation: false,
+        matched: false,
+        matches: [],
+        hasDuplicates: false,
+        _id: donation.transactionHash,
+      })
+    });
 
-    donationEvents.map((donation => {
-      donationPromises.push(
-        app.service('donations').create({
-          event: donation,
-          giverCreation: false,
-          matched: false,
-          matches: [],
-          hasDuplicates: false,
-        })
-      );
-    }));
+    await asyncForEach(donationAndCreationEvents, async (donation) => {
+      await app.service('donations').create({
+        event: donation,
+        giverCreation: true,
+        matched: false,
+        matches: [],
+        hasDuplicates: false,
+        _id: donation.transactionHash,
+      })
+    });
 
-    donationAndCreationEvents.map((donation => {
-      donationPromises.push(
-        app.service('donations').create({
-          event: donation,
-          giverCreation: true,
-          matched: false,
-          matches: [],
-          hasDuplicates: false,
-        })
-      )
-    }));
-    //
-    depositPromises = depositEvents.map((deposit => {
-      return (
-        app.service('deposits').create({
-          event: deposit,
-          matched: false,
-          matches: [],
-          hasDuplicates: false,
-        })
-      );
-    }));
+    await asyncForEach(withdrawalEvents, async (withdrawal) => {
+      await app.service('withdrawals').create({
+        event: withdrawal,
+        matched: false,
+        matches: [],
+        hasDuplicates: false,
+        _id: withdrawal.transactionHash,
+      });
+    });
 
-    withdrawalPromises = withdrawalEvents.map((withdrawal => {
-      return(
-        app.service('withdrawals').create({
-          event: withdrawal,
-          matched: false,
-          matches: [],
-          hasDuplicates: false,
-        })
-      )
-    }));
 
-    paymentPromises = paymentEvents.map((payment => {
-      return(
-        app.service('payments').create({
-          event: payment,
-          matched: false,
-          matches: [],
-          hasDuplicates: false,
-        })
-      )
-    }));
+    await asyncForEach(paymentEvents, async (payment) => {
+      await app.service('payments').create({
+        event: payment,
+        matched: false,
+        matches: [],
+        hasDuplicates: false,
+        _id: payment.transactionHash,
+      });
+    });
 
-    let donations = Promise.all(donationPromises);
-    let deposits = Promise.all(depositPromises);
-    let withdrawals = Promise.all(withdrawalPromises);
-    let payments = Promise.all(paymentPromises);
-
-    [ donations,
-      deposits,
-      withdrawals,
-      payments ] = await Promise.all([ donations, deposits, withdrawals, payments]);
-
-    // Link donations and deposits
-    await link(donations, deposits, withdrawals, payments);
     await Promise.resolve(updateRange);
 
+    return true;
 }
