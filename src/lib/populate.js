@@ -140,6 +140,8 @@ module.exports = async () => {
     let withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
     let paymentEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
 
+    let spenderEvents = homeEvents.filter(homeEvent => homeEvent.event == 'SpenderAuthorization');
+
     await asyncForEach(depositEvents, async (deposit) => {
       await app.service('deposits').create({
         event: deposit,
@@ -193,6 +195,49 @@ module.exports = async () => {
       });
     });
 
+    await asyncForEach(spenderEvents, async (spender) => {
+      const isAuthorized = spender.returnValues.authorized;
+      const address = spender.returnValues.address;
+
+      // See if the spender as previously been authorized
+      const previousRecord = await app.service('spenders').find({
+        query: {
+          'event.returnValues.address': address,
+        }
+      });
+
+      if (isAuthorized && previousRecord.total === 0) {
+        await app.service('spenders').create({
+          event: spender,
+          _id: spender.transactionHash,
+        });
+      }
+
+      if (!isAuthorized && previousRecord.total != 0 ){
+        await app.servive('spenders').remove(spender.transactionHash);
+      }
+
+    });
+
+    const owner = await foreignContract.methods.owner().call();
+    const previousOwner = await app.service('owners').find({
+      query: {
+        _id: 1,
+      }
+    });
+
+    if (previousOwner.total === 1 && previousOwner.data[0].address != owner){
+      await app.service('owners').patch(1, {
+        address: owner,
+      });
+    }
+
+    else if (previousOwner.total === 0){
+      await app.service('owners').create({
+        _id: 1,
+        address: owner,
+      });
+    }
     await Promise.resolve(updateRange);
 
     return true;

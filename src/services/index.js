@@ -3,6 +3,8 @@ const deposits = require('./deposits/deposits.service.js');
 const payments = require('./payments/payments.service.js');
 const withdrawals = require('./withdrawals/withdrawals.service.js');
 const range = require('./range/range.service.js');
+const spenders = require('./spenders/spenders.service.js');
+const owners = require('./owners/owners.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(donations);
@@ -10,4 +12,6 @@ module.exports = function (app) {
   app.configure(payments);
   app.configure(withdrawals);
   app.configure(range);
+  app.configure(spenders);
+  app.configure(owners);
 };
