@@ -73,7 +73,7 @@ class EventDetail extends Component{
       borderColor: this.props.borderColor,
       borderRadius: '5px'
     }
-
+    // TODO: fix bottom margin for error-warning when there's no table
     return(
       <div className = "event-subcontainer" style = {style}>
         <span className = "error-warning"> {duplicateMessage} </span>

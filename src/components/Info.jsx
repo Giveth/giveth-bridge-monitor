@@ -25,7 +25,30 @@ class Info extends Component{
     });
 
   }
+  getRowColor = (row) => {
+    let color;
+    if (row.original.balance < 2) {
+      color = 'rgba(176, 0, 0, 0.5)';
+    }
+    else {
+      color = 'rgba(85, 176, 0, 0.5)';
+    }
+    return color;
+  }
 
+  getTrProps = (state, row, instance) => {
+    if (row) {
+
+      return {
+        style: {
+          background: this.getRowColor(row),
+          //border: rowInfo.original.matched? '1px solid green' : '1px solid red',
+          color: 'rgba(24, 24, 24, 0.8)'
+        }
+      }
+    }
+    return {};
+  }
   render(){
     const spenderColumns = [{
       Header: "Authorized Spenders",
@@ -59,6 +82,7 @@ class Info extends Component{
               data = {this.state.spenders}
               columns = {spenderColumns}
               className = "-striped"
+              getTrProps = {this.getTrProps}
               showPagination = {false}
               sortable = {true}
               filterable = {true}
@@ -69,6 +93,7 @@ class Info extends Component{
               data = {[this.state.owner]}
               columns = {ownerColumns}
               className = "-striped"
+              getTrProps = {this.getTrProps}
               showPagination = {false}
               sortable = {true}
               filterable = {true}
