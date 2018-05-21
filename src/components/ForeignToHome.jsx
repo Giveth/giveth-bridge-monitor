@@ -156,7 +156,7 @@ class ForeignToHome extends Component{
                 }
               ]}
               SubComponent = {row => (
-                <EventDetail data = {row.original} duplicateMessage = {withdrawalDuplicateMessage} borderColor = {this.getRowColor(row)}/>
+                <EventDetail data = {row.original} duplicateTable = {true} duplicateMessage = {withdrawalDuplicateMessage} borderColor = {this.getRowColor(row)}/>
               )}/>
           </div>
           <div className = "column">
