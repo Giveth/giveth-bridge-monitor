@@ -56,19 +56,19 @@ class EventDetail extends Component{
 
     const duplicateMessage = this.props.duplicateMessage;
 
-    const data = this.props.data.matches;
-
-    const columns = [{
-      Header: "Duplicates",
-      headerClassName: "duplicates",
-      columns: [{
-        Header: "Hash",
-        accessor: 'hash'
-      }, {
-        Header: "ID",
-        accessor: "id"
-      }]
-    }]
+    // const data = this.props.data.matches;
+    //
+    // const columns = [{
+    //   Header: "Duplicates",
+    //   headerClassName: "duplicates",
+    //   columns: [{
+    //     Header: "Hash",
+    //     accessor: 'hash'
+    //   }, {
+    //     Header: "ID",
+    //     accessor: "id"
+    //   }]
+    // }]
 
     const style = {
       borderWidth: '2px',
@@ -79,13 +79,7 @@ class EventDetail extends Component{
 
     return(
       <div className = "event-subcontainer" style = {style}>
-        <span className = "error-warning"> {duplicateMessage} </span>
-        <ReactTable
-          data = {data}
-          columns = {columns}
-          showPagination = {false}
-          pageSize = {data.length}
-        />
+        <span className = "error-warning" style = {{marginBottom: '0'}}> {duplicateMessage} </span>
       </div>
     )
   }
