@@ -141,6 +141,8 @@ module.exports = async () => {
     let paymentEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
 
     let spenderEvents = homeEvents.filter(homeEvent => homeEvent.event == 'SpenderAuthorization');
+    let spenderAuths = spenderEvents.filter(event => event.returnValues.authorized);
+    let spenderDeauths = spenderEvents.filter(event => !event.returnValues.authorized);
 
     await asyncForEach(depositEvents, async (deposit) => {
       await app.service('deposits').create({
@@ -195,18 +197,24 @@ module.exports = async () => {
       });
     });
 
+    // make sure spenderEvents are in order by block
+    spenderEvents.sort((a, b) => {
+      return (a.blockNumber - b.blockNumber);
+    });
+
     await asyncForEach(spenderEvents, async (spender) => {
       const isAuthorized = spender.returnValues.authorized;
-      const address = spender.returnValues.address;
+      const address = spender.returnValues.spender;
 
       // See if the spender as previously been authorized
       const previousRecord = await app.service('spenders').find({
         query: {
-          'event.returnValues.address': address,
+          'event.returnValues.spender': address,
         }
       });
-
+      console.log(previousRecord);
       if (isAuthorized && previousRecord.total === 0) {
+        //console.log('Creating record for new spender authorized');
         await app.service('spenders').create({
           event: spender,
           _id: spender.transactionHash,
@@ -214,7 +222,7 @@ module.exports = async () => {
       }
 
       if (!isAuthorized && previousRecord.total != 0 ){
-        await app.servive('spenders').remove(spender.transactionHash);
+        await app.service('spenders').remove(previousRecord.data[0]._id);
       }
 
     });
