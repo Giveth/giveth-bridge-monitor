@@ -30,7 +30,7 @@ class BridgeMonitor extends Component{
           <TabList>
             <Tab>Home &#8594; Foreign</Tab>
             <Tab>Foreign &#8594; Home </Tab>
-            <Tab> Spenders and Owners </Tab>
+            <Tab> Info and Utilities </Tab>
           </TabList>
 
           <TabPanel>
