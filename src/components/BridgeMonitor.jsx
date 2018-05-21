@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
+
 import HomeToForeign from './HomeToForeign';
 import ForeignToHome from './ForeignToHome';
+import Info from './Info';
+
 import config from '../configuration';
 import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
@@ -18,21 +20,8 @@ class BridgeMonitor extends Component{
     this.state = {
       client,
     };
-    this.loadEvents();
-  }
-  loadEvents = async () => {
-    const client = this.state.client;
-    const query = {
-      query: {
-        paginate: false,
-      }
-    }
-    client.service('donations').find(query).then((donations) => this.setState({donations: donations.data}));
-    client.service('deposits').find(query).then((deposits) => this.setState({deposits: deposits.data}));
-    client.service('withdrawals').find(query).then((withdrawals) => this.setState({withdrawals: withdrawals.data}));
-    client.service('payments').find(query).then((payments) => this.setState({payments: payments.data}));
-  }
 
+  }
   render(){
     return (
       <div>
@@ -41,6 +30,7 @@ class BridgeMonitor extends Component{
           <TabList>
             <Tab>Home &#8594; Foreign</Tab>
             <Tab>Foreign &#8594; Home </Tab>
+            <Tab> Spenders and Owners </Tab>
           </TabList>
 
           <TabPanel>
@@ -51,6 +41,9 @@ class BridgeMonitor extends Component{
             <ForeignToHome client = {this.state.client}/>
           </TabPanel>
 
+          <TabPanel>
+            <Info client = {this.state.client}/>
+          </TabPanel>
         </Tabs>
       </div>
     )

@@ -4,8 +4,6 @@ import Web3 from 'web3';
 
 import EventDetail from './EventDetail';
 
-import 'react-table/react-table.css';
-import "../styles/styles.css";
 
 class ForeignToHome extends Component{
 
@@ -73,7 +71,7 @@ class ForeignToHome extends Component{
   render() {
     const withdrawalColumns = [
       {
-        Header: 'Home withdrawals',
+        Header: 'Foreign Withdrawals',
         headerClassName: 'withdrawals',
         columns: [
           {
@@ -105,7 +103,7 @@ class ForeignToHome extends Component{
 
     const paymentColumns = [
       {
-        Header: 'Foreign payments',
+        Header: 'Home Payments',
         headerClassName: 'payments',
         columns: [
           {

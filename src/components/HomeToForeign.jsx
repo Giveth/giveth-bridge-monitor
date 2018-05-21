@@ -4,9 +4,6 @@ import Web3 from 'web3';
 
 import EventDetail from './EventDetail';
 
-import 'react-table/react-table.css';
-import "../styles/styles.css";
-
 class HomeToForeign extends Component{
 
   constructor(props){

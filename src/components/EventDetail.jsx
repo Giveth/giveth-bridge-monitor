@@ -8,7 +8,6 @@ class EventDetail extends Component{
 
   renderReturnTable() {
     const data = this.props.data;
-    const eventName = data.event.event;
     const returnValues = data.event.returnValues;
 
     const returnKeys = Object.keys(returnValues).filter(key => isNaN(parseInt(key, 10)));
@@ -108,7 +107,6 @@ class EventDetail extends Component{
   render(){
     const matched = this.props.data.matched;
     const duplicated = this.props.data.hasDuplicates;
-
     const style = {
       borderWidth: '2px',
       borderStyle: 'solid',
