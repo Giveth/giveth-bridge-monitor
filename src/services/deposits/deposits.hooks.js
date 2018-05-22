@@ -35,6 +35,7 @@ module.exports = {
       // match.patch tells the donation (in it's before patch hook) if the deposit needs to be flagged as a duplicate, since the first deposit added to the matches doesn't know if it will be a duplicate until another is added
       const previousMatches = donation.matches;
       const matches = previousMatches.concat({
+        _id: deposit._id,
         hash: deposit.event.transactionHash,
         patch: !hasDuplicates,
       });

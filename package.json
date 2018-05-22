@@ -27,8 +27,10 @@
     "start": "node src/",
     "testnet": "NODE_ENV=testnet node src/",
     "mocha": "mocha test/ --recursive --exit",
-    "clean": "rm -r ./data/",
-    "serve": "pm2 startOrRestart ecosystem.config.js --env production"
+    "purge": "rm -r ./data/",
+    "serve": "pm2 startOrRestart ecosystem.config.js --env production",
+    "re-serve": "rm -r ./data && pm2 startOrRestart ecosystem.config.js --env production",
+    "logs": "pm2 logs giveth-bridge-monitor [--lines 1000]"
   },
   "dependencies": {
     "@feathersjs/configuration": "^1.0.2",

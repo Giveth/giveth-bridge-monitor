@@ -36,6 +36,7 @@ module.exports = {
       // match.patch tells the withdrawal (in it's before patch hook) if the payment needs to be flagged as a duplicate, since the first payment added to the matches doesn't know if it will be a duplicate until another is added
       const previousMatches = withdrawal.matches;
       const matches = previousMatches.concat({
+        _id: payment._id,
         hash: payment.event.transactionHash,
         patch: !hasDuplicates,
       });
