@@ -10,7 +10,7 @@ module.exports = {
 
       const payment = context.data;
       const reference = payment.event.returnValues.reference;
-      
+
       // find referenced withdrawal
       // TODO: this could probably be done with get(reference), since the hashes are used as the ids, but it might need a try/catch
       const withdrawals = await context.app.service('withdrawals').find({
@@ -18,7 +18,7 @@ module.exports = {
           'event.transactionHash': reference,
         }
       });
-      // console.log(withdrawals);
+
       // if no withdrawals are found, bail
       if (withdrawals.total === 0) return context;
 
