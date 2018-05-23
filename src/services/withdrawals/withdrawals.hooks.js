@@ -52,7 +52,7 @@ module.exports = {
         // (there SHOULD only be one, and it SHOULD be the first, but this is a safeguard)
         for (let i = 0; i < matches.length; i++){
           if (matches[i].patch) {
-            paymentToPatch = matches[i]._id;
+            paymentToPatch = matches[i].hash;
             index = i;
             break;
           }

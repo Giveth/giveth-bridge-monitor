@@ -3,13 +3,13 @@
   "port": 3030,
   "public": "../public/",
   "paginate": {
-    "default": 60,
-    "max": 300
+    "default": 300,
+    "max": 500
   },
   "nedb" : "../data",
   "pollTime": 3000,
-  "homeStartBlock" :  0,
-  "foreignStartBlock": 0,
+  "homeStartBlock" :  3287844,
+  "foreignStartBlock": 2328625,
   "homeNodeURL": "http://localhost:8545",
   "foreignNodeURL": "http://localhost:8546",
   "homeContractAddress" : "0x28337E63a325AEfc6C59E0f5f43Fc87943A3714a",

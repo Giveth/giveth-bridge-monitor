@@ -89,6 +89,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
+      _id: donation.transactionHash,
     })
   });
 
@@ -99,6 +100,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
+      _id: donation.transactionHash,
     })
   });
 
@@ -108,6 +110,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
+      _id: deposit.transactionHash,
     });
   });
 
@@ -117,6 +120,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
+      _id: withdrawal.transactionHash,
     });
   });
 
@@ -127,6 +131,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
+      _id: payment.transactionHash,
     });
   });
 
