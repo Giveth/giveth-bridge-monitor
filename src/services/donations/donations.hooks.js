@@ -14,7 +14,7 @@ module.exports = {
           'event.returnValues.homeTx': hash,
         }
       });
-
+      
       if (deposits.total === 0) return context;
       const hasDuplicates = (deposits.total > 1);
 
@@ -50,7 +50,7 @@ module.exports = {
         // (there SHOULD only be one, and it SHOULD be the first, but this is a safeguard)
         for (let i = 0; i < matches.length; i++){
           if (matches[i].patch) {
-            depositToPatch = matches[i].hash;
+            depositToPatch = matches[i]._id;
             index = i;
             break;
           }
