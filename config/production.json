@@ -6,6 +6,6 @@
   },
   "homeNodeURL": "https://ropsten.infura.io/HDYgcFmpY0f2PqcsSiPB",
   "foreignNodeURL": "https://rinkeby.giveth.io",
-  "homeContractAddress" : "0x0cB06B291c40c76d7bEe7C9f1fAa4D6A4b338C49",
-  "foreignContractAddress" : "0x97bd4e1b4f647ab5f0a8248dd9c7218ce044ced9"
+  "homeContractAddress" : "0x8588EE5E97e06bA863FDB2EBc5b523246D459638",
+  "foreignContractAddress" : "0xE91Bf42cb524afa9f01AB56E1804eD162C643d05"
 }
