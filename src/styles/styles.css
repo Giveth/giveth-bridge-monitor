@@ -33,7 +33,10 @@ body {
   width: 50%;
   margin: 1em;
 }
-
+a {
+  color: black;
+  font-weight: bold;
+}
 /* .ReactTable .rt-thead .rt-resizable-header{
   overflow: hidden;
 } */

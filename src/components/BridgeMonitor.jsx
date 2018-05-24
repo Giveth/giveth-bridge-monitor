@@ -19,8 +19,13 @@ class BridgeMonitor extends Component{
     client.configure(feathers.socketio(socket)); 
     this.state = {
       client,
+      info: undefined
     };
-
+    client.service('information').find().then((info) => {
+      this.setState({
+        info: info.data[0],
+      })
+    });
   }
   render(){
     return (
@@ -42,7 +47,7 @@ class BridgeMonitor extends Component{
           </TabPanel>
 
           <TabPanel>
-            <Info client = {this.state.client}/>
+            <Info client = {this.state.client} contracts = {this.state.info}/>
           </TabPanel>
         </Tabs>
       </div>
