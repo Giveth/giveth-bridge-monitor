@@ -4,6 +4,7 @@
     "default": 300,
     "max": 1000
   },
+  "pollTime": 300000,
   "homeNodeURL": "https://ropsten.infura.io/HDYgcFmpY0f2PqcsSiPB",
   "foreignNodeURL": "https://rinkeby.giveth.io",
   "homeContractAddress" : "0x8588EE5E97e06bA863FDB2EBc5b523246D459638",
