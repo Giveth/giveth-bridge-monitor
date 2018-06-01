@@ -58,10 +58,17 @@ module.exports = async () => {
     toBlock: currentForeignBlock,
   };
 
-  let eventPromises = [
-    homeContract.getPastEvents('allEvents', homeRange),
-    foreignContract.getPastEvents('allEvents', foreignRange)
-  ];
+  let eventPromises;
+  try {
+      eventPromises = [
+      homeContract.getPastEvents('allEvents', homeRange),
+      foreignContract.getPastEvents('allEvents', foreignRange)
+      ];
+    }
+  catch (error) {
+    console.log('@ event promises');
+    return false;
+  }
 
   let homeEvents, foreignEvents;
   try {
@@ -162,6 +169,7 @@ module.exports = async () => {
     }
 
   });
+
   let owner;
   try {
     owner = await foreignContract.methods.owner().call();
