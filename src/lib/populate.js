@@ -162,8 +162,14 @@ module.exports = async () => {
     }
 
   });
-
-  const owner = await foreignContract.methods.owner().call();
+  let owner;
+  try {
+    owner = await foreignContract.methods.owner().call();
+  }
+  catch(error){
+    console.log('Calling foreign contract owner() failed, bailing')
+    return false;
+  }
   const previousOwner = await app.service('owners').find({
     query: {
       _id: 1,
