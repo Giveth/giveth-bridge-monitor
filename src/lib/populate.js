@@ -12,22 +12,22 @@ module.exports = async () => {
   const homeNodeURL = app.get('homeNodeURL');
   const foreignNodeURL = app.get('foreignNodeURL');
 
-  //console.log('Creating Web3 objects...');
+  console.log('Creating Web3 objects...');
   const homeWeb3 = new Web3(homeNodeURL);
   const foreignWeb3 = new Web3(foreignNodeURL);
-  //console.log('Success!');
+  console.log('Success!');
 
   const homeContractAddress = app.get('homeContractAddress');
   const foreignContractAddress = app.get('foreignContractAddress');
 
-  //console.log('Creating contract instances...');
+  console.log('Creating contract instances...');
   const homeContract = new homeWeb3.eth.Contract(HomeBridgeABI, homeContractAddress);
   const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, foreignContractAddress);
-  //console.log('Success!');
+  console.log('Success!');
 
-  //console.log('Retrieving any stored block range...');
+  console.log('Retrieving any stored block range...');
 
-  //console.log('Getting current home block number...');
+  console.log('Getting current home block number...');
   let currentHomeBlock;
   try {
     currentHomeBlock = await homeWeb3.eth.getBlockNumber();
@@ -36,8 +36,9 @@ module.exports = async () => {
     console.log(error);
     return true;
   }
-  //console.log('Success!');
+  console.log('Success!');
 
+  console.log('Getting current foreign block number...');
   let currentForeignBlock;
   try {
     currentForeignBlock = await foreignWeb3.eth.getBlockNumber();
@@ -45,6 +46,7 @@ module.exports = async () => {
     console.log(error)
     return true;
   }
+  console.log('Success!');
 
   const range = await app.service('range').get(1);
 
@@ -58,6 +60,7 @@ module.exports = async () => {
     toBlock: currentForeignBlock,
   };
 
+  console.log('Getting past events...');
   let eventPromises;
   try {
       eventPromises = [
@@ -66,18 +69,21 @@ module.exports = async () => {
       ];
     }
   catch (error) {
-    console.log('@ event promises');
+    console.log(error);
+    console.log('@ event promise intial');
     return false;
   }
-
+  //
   let homeEvents, foreignEvents;
   try {
     [homeEvents, foreignEvents] = await Promise.all(eventPromises);
   } catch (error) {
     console.log(error);
-    return true;
+    console.log('@ event promises resolving');
+    return false;
   }
-  //console.log('Success!');
+
+  console.log('Success!');
 
   let donationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
   let donationAndCreationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
@@ -170,6 +176,7 @@ module.exports = async () => {
 
   });
 
+  console.log('Getting foreign owner...')
   let owner;
   try {
     owner = await foreignContract.methods.owner().call();
@@ -183,6 +190,7 @@ module.exports = async () => {
       _id: 1,
     }
   });
+  console.log('Success!');
 
   if (previousOwner.total === 1 && previousOwner.data[0].address != owner){
     await app.service('owners').patch(1, {
