@@ -25,14 +25,12 @@ module.exports = async () => {
   const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, foreignContractAddress);
   console.log('Success!');
 
-  console.log('Retrieving any stored block range...');
 
   console.log('Getting current home block number...');
   let currentHomeBlock;
   try {
     currentHomeBlock = await homeWeb3.eth.getBlockNumber();
   } catch (error){
-    //console.log('Funky error getting home block number from infura:');
     console.log(error);
     return true;
   }
@@ -48,8 +46,15 @@ module.exports = async () => {
   }
   console.log('Success!');
 
+  console.log('Retrieving any stored block range...');
   const range = await app.service('range').get(1);
-
+  console.log('Success!');
+  // Either no new home or foreign blocks, or an incorrect current block number was given
+  if ((currentHomeBlock < range.home) || (currentForeignBlock < range.foreign)) {
+    console.log('Either no new home or foreign blocks, or retrieved current block number looks fishy...')
+    console.log('Exiting.')
+    return true;
+  }
   const homeRange = {
     fromBlock: range.home,
     toBlock: currentHomeBlock
@@ -70,20 +75,30 @@ module.exports = async () => {
     }
   catch (error) {
     console.log(error);
-    console.log('@ event promise intial');
-    return false;
+    return true;
   }
-  //
+
   let homeEvents, foreignEvents;
   try {
     [homeEvents, foreignEvents] = await Promise.all(eventPromises);
   } catch (error) {
     console.log(error);
-    console.log('@ event promises resolving');
-    return false;
+    return true;
   }
-
   console.log('Success!');
+
+  console.log('Getting foreign owner...')
+  let owner;
+  try {
+    owner = await foreignContract.methods.owner().call();
+  }
+  catch(error){
+    console.log(error)
+    return true;
+  }
+  console.log('Success!');
+
+  console.log('Blockchain interaction finished, creating records...')
 
   let donationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
   let donationAndCreationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
@@ -176,21 +191,12 @@ module.exports = async () => {
 
   });
 
-  console.log('Getting foreign owner...')
-  let owner;
-  try {
-    owner = await foreignContract.methods.owner().call();
-  }
-  catch(error){
-    console.log('Calling foreign contract owner() failed, bailing')
-    return false;
-  }
+
   const previousOwner = await app.service('owners').find({
     query: {
       _id: 1,
     }
   });
-  console.log('Success!');
 
   if (previousOwner.total === 1 && previousOwner.data[0].address != owner){
     await app.service('owners').patch(1, {
@@ -205,10 +211,11 @@ module.exports = async () => {
     });
   }
 
-  await app.service('range').patch(1, {
+  const patched = await app.service('range').patch(1, {
       home: currentHomeBlock + 1,
       foreign: currentForeignBlock + 1,
   });
 
+  console.log('Success!');
   return true;
 }
