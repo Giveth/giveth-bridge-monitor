@@ -13,8 +13,15 @@ module.exports = async () => {
   const foreignNodeURL = app.get('foreignNodeURL');
 
   console.log('Creating Web3 objects...');
-  const homeWeb3 = new Web3(homeNodeURL);
-  const foreignWeb3 = new Web3(foreignNodeURL);
+  let homeWeb3, foreignWeb3;
+  try {
+    homeWeb3 = new Web3(homeNodeURL);
+    foreignWeb3 = new Web3(foreignNodeURL);
+  }
+  catch (error) {
+    console.log(error);
+    return true;
+  }
   console.log('Success!');
 
   const homeContractAddress = app.get('homeContractAddress');
