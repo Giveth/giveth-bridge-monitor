@@ -11,6 +11,8 @@ const configurations = {
   testnet: {
     title: 'testnet',
     feathersConnection: 'https://feathers.bridge.giveth.io/',
+    homeEtherscanURL: 'https://ropsten.etherscan.io/',
+    foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
   }
   // mainnet: {
   //   title: 'mainnet',

@@ -38,17 +38,18 @@ class EventDetail extends Component{
       borderColor: 'rgba(160, 160, 160, 0.7)',
       borderRadius: '5px'
     }
-
+    const etherscanLink = this.props.etherscanURL + 'tx/' + this.props.data.event.transactionHash;
     return (
       <div className = "event-subcontainer" style = {style}>
         <span className = "event-name">- {this.props.data.event.event} Event -</span>
+        <span className = "event-name"><a target = "_blank" href = {etherscanLink}> Etherscan </a></span>
+
         <ReactTable
           data = {returnValuesData}
           columns = {returnValuesColumns}
           showPagination = {false}
           sortable = {false}
-          pageSize = {returnValuesData.length}
-        />
+          pageSize = {returnValuesData.length}/>
       </div>
     )
   }
