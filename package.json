@@ -2,26 +2,71 @@
   "name": "giveth-bridge-monitor",
   "version": "0.1.0",
   "private": true,
+  "main": "src",
+  "keywords": [
+    "feathers"
+  ],
+  "author": {
+    "name": "Max Kant",
+    "email": "maxskant@gmail.com"
+  },
+  "contributors": [],
+  "bugs": {},
+  "directories": {
+    "lib": "src",
+    "test": "test/"
+  },
+  "engines": {
+    "node": "^8.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "scripts": {
+    "build": "react-scripts build",
+    "test": "npm run eslint && npm run mocha",
+    "eslint": "eslint src/. test/. --config .eslintrc.json",
+    "start:feathers": "node feathers-src/",
+    "start:ui": "react-scripts start",
+    "start": "npm run start:feathers & npm run start:ui",
+    "testnet": "REACT_APP_ENVIRONMENT=testnet NODE_ENV=testnet npm run start",
+    "mocha": "mocha test/ --recursive --exit",
+    "test": "react-scripts test --env=jsdom",
+    "purge": "rm -r ./data/",
+    "serve": "pm2 startOrRestart ecosystem.config.js --env production",
+    "re-serve": "rm -r ./data && pm2 startOrRestart ecosystem.config.js --env production",
+    "logs": "pm2 logs giveth-bridge-monitor [--lines 1000]",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@feathersjs/client": "^3.4.4",
+    "@feathersjs/configuration": "^1.0.2",
+    "@feathersjs/errors": "^3.3.0",
+    "@feathersjs/express": "^1.2.2",
     "@feathersjs/feathers": "^3.1.4",
+    "@feathersjs/socketio": "^3.2.1",
     "@feathersjs/socketio-client": "^1.1.0",
-    "giveth-bridge": "0.0.1",
+    "babel-cli": "^6.26.0",
+    "compression": "^1.7.2",
+    "cors": "^2.8.4",
+    "feathers-nedb": "^3.0.0",
+    "giveth-bridge": "0.0.11",
+    "helmet": "^3.12.0",
+    "nedb": "^1.8.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-scripts": "1.1.4",
     "react-table": "^6.8.2",
     "react-tabs": "^2.2.2",
     "reset-css": "^3.0.0",
+    "serve-favicon": "^2.5.0",
     "socket.io-client": "^2.1.0",
     "typeface-roboto": "0.0.54",
-    "web3": "^1.0.0-beta.34"
+    "web3": "^1.0.0-beta.34",
+    "winston": "^2.4.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "testnet": "REACT_APP_ENVIRONMENT=testnet react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "mocha": "^5.1.1",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2"
   }
 }
