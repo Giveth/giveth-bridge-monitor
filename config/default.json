@@ -1,7 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
-  "public": "../public/",
+  "public": "../public-feathers/",
   "paginate": {
     "default": 300,
     "max": 500
