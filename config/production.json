@@ -7,6 +7,6 @@
   "pollTime": 300000,
   "homeNodeURL": "https://ropsten.giveth.io",
   "foreignNodeURL": "https://rinkeby.giveth.io",
-  "homeContractAddress" : "0x8588EE5E97e06bA863FDB2EBc5b523246D459638",
+  "homeContractAddress" : "0x5C51D535b8f2d12Df5dcA76282ACD8994dbA4534",
   "foreignContractAddress" : "0x8f5c03c2249cd35742efb6c2ed084e4e8f1773ee"
 }
