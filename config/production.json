@@ -5,6 +5,8 @@
     "max": 1000
   },
   "pollTime": 300000,
+  "homeStartBlock" :  3444446,
+  "foreignStartBlock": 2455570,
   "homeNodeURL": "https://ropsten.giveth.io",
   "foreignNodeURL": "https://rinkeby.giveth.io",
   "homeContractAddress" : "0x5C51D535b8f2d12Df5dcA76282ACD8994dbA4534",
