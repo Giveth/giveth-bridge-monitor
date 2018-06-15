@@ -87,6 +87,7 @@ class EventTable extends Component {
         filterable = {true}
         pageSize = {this.props.events.length}
         getTrProps = {this.getTrProps}
+        collapseOnDataChange = {false}
         defaultSorted = {[
           {
             id: 'block',

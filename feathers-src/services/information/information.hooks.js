@@ -4,7 +4,14 @@ module.exports = {
   before: {
     all: [],
     find: [],
-    get: [],
+    get: [(context) => {
+      context.result = {
+        homeContract: context.app.get('homeContractAddress'),
+        foreignContract: context.app.get('foreignContractAddress')
+      };
+
+      return context;
+    }],
     create: [],
     update: [],
     patch: [],

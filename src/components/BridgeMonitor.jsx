@@ -5,7 +5,7 @@ import EventTable from './EventTable';
 import Info from './Info';
 
 import config from '../configuration';
-import feathers from '@feathersjs/client'; 
+import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
 
 class BridgeMonitor extends Component{
@@ -24,9 +24,9 @@ class BridgeMonitor extends Component{
       payments: [],
       info: undefined
     };
-    client.service('information').find().then((info) => {
+    client.service('information').get(1).then((info) => {
       this.setState({
-        info: info.data[0],
+        info,
       })
     });
 
@@ -59,8 +59,9 @@ class BridgeMonitor extends Component{
         payments: payments.data,
       });
     });
-    //setTimeout(this.loadEvents, 1000);
+    setTimeout(this.loadEvents, 5000);
   }
+
   render(){
     return (
       <div>
