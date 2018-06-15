@@ -2,10 +2,10 @@ const app = require('../app');
 const Web3 = require('web3');
 const asyncForEach = require('./helpers/asyncForEach');
 
-const HomeBridgeContract = require('giveth-bridge/build/contracts/GivethBridge.sol.js');
-const HomeBridgeABI = HomeBridgeContract.GivethBridgeAbi;
-const ForeignBridgeContract = require('giveth-bridge/build/contracts/ForeignGivethBridge.sol.js');
-const ForeignBridgeABI = ForeignBridgeContract.ForeignGivethBridgeAbi;
+const HomeBridgeContract = require('giveth-bridge/build/GivethBridge.json');
+const HomeBridgeABI = HomeBridgeContract.compilerOutput.abi;
+const ForeignBridgeContract = require('giveth-bridge/build/ForeignGivethBridge.json');
+const ForeignBridgeABI = ForeignBridgeContract.compilerOutput.abi;
 
 module.exports = async () => {
 
