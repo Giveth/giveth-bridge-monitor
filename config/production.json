@@ -9,6 +9,6 @@
   "foreignStartBlock": 2455570,
   "homeNodeURL": "https://ropsten.giveth.io",
   "foreignNodeURL": "https://rinkeby.giveth.io",
-  "homeContractAddress" : "0x5C51D535b8f2d12Df5dcA76282ACD8994dbA4534",
-  "foreignContractAddress" : "0x8f5c03c2249cd35742efb6c2ed084e4e8f1773ee"
+  "homeContractAddress" : "0x88aa025B9D55171f759A7c538E1e1eAa6d8A0169",
+  "foreignContractAddress" : "0x97A7aFbEEa1ff03cc18c0d80404a17D118288054"
 }
