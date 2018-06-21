@@ -8,12 +8,18 @@ const configurations = {
     title: 'localhost',
     feathersConnection: 'http://localhost:3030',
   },
-  testnet: {
-    title: 'testnet',
-    feathersConnection: 'https://feathers.bridge.giveth.io/',
+  develop: {
+    title: 'develop',
+    feathersConnection: 'https://feathers.bridge.develop.giveth.io/',
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
-  }
+  },
+  release: {
+    title: 'release',
+    feathersConnection: 'https://feathers.bridge.release.giveth.io/',
+    homeEtherscanURL: 'https://ropsten.etherscan.io/',
+    foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
+  },
   // mainnet: {
   //   title: 'mainnet',
   //   feathersConnection: 'https://feathers.mainnet.giveth.io',
