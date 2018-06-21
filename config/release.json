@@ -1,5 +1,5 @@
 {
-  "port": 3040,
+  "port": 3042,
   "paginate": {
     "default": 300,
     "max": 1000
@@ -9,6 +9,6 @@
   "foreignStartBlock": 2455570,
   "homeNodeURL": "https://ropsten.giveth.io",
   "foreignNodeURL": "https://rinkeby.giveth.io",
-  "homeContractAddress" : "0x88aa025B9D55171f759A7c538E1e1eAa6d8A0169",
-  "foreignContractAddress" : "0x97A7aFbEEa1ff03cc18c0d80404a17D118288054"
+  "homeContractAddress" : "0xC59dCE5CCC065A4b51A2321F857466A25ca49B40",
+  "foreignContractAddress" : "0x9423F77f919f90Ce02a063315A0F604b5D0b7aF6"
 }
