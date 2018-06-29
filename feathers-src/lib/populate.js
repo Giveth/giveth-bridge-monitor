@@ -8,7 +8,6 @@ const ForeignBridgeContract = require('giveth-bridge/build/ForeignGivethBridge.j
 const ForeignBridgeABI = ForeignBridgeContract.compilerOutput.abi;
 
 module.exports = async () => {
-
   const homeNodeURL = app.get('homeNodeURL');
   const foreignNodeURL = app.get('foreignNodeURL');
 
@@ -17,8 +16,7 @@ module.exports = async () => {
   try {
     homeWeb3 = new Web3(homeNodeURL);
     foreignWeb3 = new Web3(foreignNodeURL);
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
     return true;
   }
@@ -32,12 +30,11 @@ module.exports = async () => {
   const foreignContract = new foreignWeb3.eth.Contract(ForeignBridgeABI, foreignContractAddress);
   console.log('Success!');
 
-
   console.log('Getting current home block number...');
   let currentHomeBlock;
   try {
     currentHomeBlock = await homeWeb3.eth.getBlockNumber();
-  } catch (error){
+  } catch (error) {
     console.log(error);
     return true;
   }
@@ -47,8 +44,8 @@ module.exports = async () => {
   let currentForeignBlock;
   try {
     currentForeignBlock = await foreignWeb3.eth.getBlockNumber();
-  } catch (error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     return true;
   }
   console.log('Success!');
@@ -57,14 +54,16 @@ module.exports = async () => {
   const range = await app.service('range').get(1);
   console.log('Success!');
   // Either no new home or foreign blocks, or an incorrect current block number was given
-  if ((currentHomeBlock < range.home) || (currentForeignBlock < range.foreign)) {
-    console.log('Either no new home or foreign blocks, or retrieved current block number looks fishy...')
-    console.log('Exiting.')
+  if (currentHomeBlock < range.home || currentForeignBlock < range.foreign) {
+    console.log(
+      'Either no new home or foreign blocks, or retrieved current block number looks fishy...',
+    );
+    console.log('Exiting.');
     return true;
   }
   const homeRange = {
     fromBlock: range.home,
-    toBlock: currentHomeBlock
+    toBlock: currentHomeBlock,
   };
 
   const foreignRange = {
@@ -75,12 +74,11 @@ module.exports = async () => {
   console.log('Getting past events...');
   let eventPromises;
   try {
-      eventPromises = [
+    eventPromises = [
       homeContract.getPastEvents('allEvents', homeRange),
-      foreignContract.getPastEvents('allEvents', foreignRange)
-      ];
-    }
-  catch (error) {
+      foreignContract.getPastEvents('allEvents', foreignRange),
+    ];
+  } catch (error) {
     console.log(error);
     return true;
   }
@@ -94,21 +92,25 @@ module.exports = async () => {
   }
   console.log('Success!');
 
-  console.log('Getting foreign owner...')
-  let owner;
+  console.log('Getting foreign depositor...');
+  let depositor;
   try {
-    owner = await foreignContract.methods.owner().call();
-  }
-  catch(error){
-    console.log(error)
+    depositor = await foreignContract.methods.depositor().call();
+  } catch (error) {
+    console.log(error);
     return true;
   }
   console.log('Success!');
 
-  console.log('Blockchain interaction finished, creating records...')
+  const securityGuardLastCheckin = await homeContract.methods.securityGuardLastCheckin().call() * 1000;
+  app.set('securityGuardLastCheckin', securityGuardLastCheckin);
+
+  console.log('Blockchain interaction finished, creating records...');
 
   let donationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
-  let donationAndCreationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'DonateAndCreateGiver');
+  let donationAndCreationEvents = homeEvents.filter(
+    homeEvent => homeEvent.event == 'DonateAndCreateGiver',
+  );
   let depositEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Deposit');
   let withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
   let paymentEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
@@ -117,7 +119,7 @@ module.exports = async () => {
   let spenderAuths = spenderEvents.filter(event => event.returnValues.authorized);
   let spenderDeauths = spenderEvents.filter(event => !event.returnValues.authorized);
 
-  await asyncForEach(donationEvents, async (donation) => {
+  await asyncForEach(donationEvents, async donation => {
     await app.service('donations').create({
       event: donation,
       giverCreation: false,
@@ -125,10 +127,10 @@ module.exports = async () => {
       matches: [],
       hasDuplicates: false,
       _id: donation.transactionHash,
-    })
+    });
   });
 
-  await asyncForEach(donationAndCreationEvents, async (donation) => {
+  await asyncForEach(donationAndCreationEvents, async donation => {
     await app.service('donations').create({
       event: donation,
       giverCreation: true,
@@ -136,10 +138,10 @@ module.exports = async () => {
       matches: [],
       hasDuplicates: false,
       _id: donation.transactionHash,
-    })
+    });
   });
 
-  await asyncForEach(depositEvents, async (deposit) => {
+  await asyncForEach(depositEvents, async deposit => {
     await app.service('deposits').create({
       event: deposit,
       matched: false,
@@ -149,7 +151,7 @@ module.exports = async () => {
     });
   });
 
-  await asyncForEach(withdrawalEvents, async (withdrawal) => {
+  await asyncForEach(withdrawalEvents, async withdrawal => {
     await app.service('withdrawals').create({
       event: withdrawal,
       matched: false,
@@ -159,23 +161,31 @@ module.exports = async () => {
     });
   });
 
-
-  await asyncForEach(paymentEvents, async (payment) => {
-    await app.service('payments').create({
-      event: payment,
-      matched: false,
-      matches: [],
-      hasDuplicates: false,
-      _id: payment.transactionHash,
-    });
+  await asyncForEach(paymentEvents, async payment => {
+    await homeContract.methods
+      .authorizedPayments(payment.idPayment)
+      .call()
+      .then(p =>
+        app.service('payments').create({
+          event: payment,
+          matched: false,
+          paid: p.paid,
+          canceled: p.canceled,
+          matches: [],
+          earliestPayTime: Number(p.earliestPayTime) * 1000,
+          securityGuardDelay: Number(p.securityGuardDelay),
+          hasDuplicates: false,
+          _id: payment.transactionHash,
+        }),
+      );
   });
 
   // make sure spenderEvents are in order by block
   spenderEvents.sort((a, b) => {
-    return (a.blockNumber - b.blockNumber);
+    return a.blockNumber - b.blockNumber;
   });
 
-  await asyncForEach(spenderEvents, async (spender) => {
+  await asyncForEach(spenderEvents, async spender => {
     const isAuthorized = spender.returnValues.authorized;
     const address = spender.returnValues.spender;
 
@@ -183,7 +193,7 @@ module.exports = async () => {
     const previousRecord = await app.service('spenders').find({
       query: {
         'event.returnValues.spender': address,
-      }
+      },
     });
 
     if (isAuthorized && previousRecord.total === 0) {
@@ -192,37 +202,54 @@ module.exports = async () => {
       });
     }
 
-    if (!isAuthorized && previousRecord.total != 0 ){
+    if (!isAuthorized && previousRecord.total != 0) {
       await app.service('spenders').remove(previousRecord.data[0]._id);
     }
-
   });
-
 
   const previousOwner = await app.service('owners').find({
     query: {
       _id: 1,
-    }
+    },
   });
 
-  if (previousOwner.total === 1 && previousOwner.data[0].address != owner){
+  if (previousOwner.total === 1 && previousOwner.data[0].address != depositor) {
     await app.service('owners').patch(1, {
-      address: owner,
+      address: depositor,
     });
-  }
-
-  else if (previousOwner.total === 0){
+  } else if (previousOwner.total === 0) {
     await app.service('owners').create({
       _id: 1,
-      address: owner,
+      address: depositor,
     });
   }
 
   const patched = await app.service('range').patch(1, {
-      home: currentHomeBlock + 1,
-      foreign: currentForeignBlock + 1,
+    home: currentHomeBlock + 1,
+    foreign: currentForeignBlock + 1,
   });
+
+  // update payment status
+  await app
+    .service('payments')
+    .find({ paginate: false, query: { $and: [{ paid: false }, { canceled: false }] } })
+    .then(payments =>
+      payments.map(p =>
+        homeContract.methods
+          .authorizedPayments(p.event.returnValues.idPayment)
+          .call()
+          .then(p => {
+            return app.service('payments').update(p._id, {
+              paid: p.paid,
+              canceled: p.canceled,
+              earliestPayTime: Number(p.earliestPayTime) * 1000,
+              securityGuardDelay: Number(p.securityGuardDelay),
+            });
+          }),
+      ),
+    )
+    .then(promises => Promise.all(promises));
 
   console.log('Success!');
   return true;
-}
+};

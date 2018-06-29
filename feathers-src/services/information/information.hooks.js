@@ -7,7 +7,8 @@ module.exports = {
     get: [(context) => {
       context.result = {
         homeContract: context.app.get('homeContractAddress'),
-        foreignContract: context.app.get('foreignContractAddress')
+        foreignContract: context.app.get('foreignContractAddress'),
+        securityGuardLastCheckin: context.app.get('securityGuardLastCheckin')
       };
 
       return context;

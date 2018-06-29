@@ -65,7 +65,7 @@ class Info extends Component{
       }]
     }];
     const ownerColumns = [{
-      Header: "Foreign Bridge Owner",
+      Header: "Foreign Bridge Depositor",
       headerClassName: "owner",
       columns: [{
         Header: 'Address',

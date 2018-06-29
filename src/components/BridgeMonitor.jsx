@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import EventTable from './EventTable';
+import PaymentsTable from './PaymentsTable';
 import Info from './Info';
 
 import config from '../configuration';
@@ -70,6 +71,7 @@ class BridgeMonitor extends Component{
           <TabList>
             <Tab>Home &#8594; Foreign</Tab>
             <Tab>Foreign &#8594; Home </Tab>
+            <Tab>Authorized Payments</Tab>
             <Tab> Info and Utilities </Tab>
           </TabList>
 
@@ -114,6 +116,16 @@ class BridgeMonitor extends Component{
                   duplicateMessage = "The home transaction of this payment has other payments that also reference it!"
                   duplicateTable = {false}
                   etherscanURL = {config.homeEtherscanURL}
+                />
+              </div>
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div className = "flex_container">
+              <div className = "column">
+                <PaymentsTable
+                  payments = {this.state.payments}
+                  lastCheckin = {this.state.info.securityGuardLastCheckin}
                 />
               </div>
             </div>
