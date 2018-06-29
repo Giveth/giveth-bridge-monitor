@@ -9,7 +9,7 @@ class Info extends Component{
     super(props);
     this.state = {
       spenders: [],
-      owner: [],
+      depositor: undefined,
     }
     this.loadEvents();
   }
@@ -21,9 +21,9 @@ class Info extends Component{
         spenders: spenders.data,
       });
     });
-    client.service('owners').get(1).then((owner) => {
+    client.service('depositors').find().then((depositor) => {
       this.setState({
-        owner,
+        depositor,
       });
     });
   }
@@ -64,9 +64,9 @@ class Info extends Component{
         accessor: 'balance'
       }]
     }];
-    const ownerColumns = [{
+    const depositorColumns = [{
       Header: "Foreign Bridge Depositor",
-      headerClassName: "owner",
+      headerClassName: "depositor",
       columns: [{
         Header: 'Address',
         id: 'address',
@@ -105,8 +105,8 @@ class Info extends Component{
           </div>
           <div className = "column">
             <ReactTable
-              data = {[this.state.owner]}
-              columns = {ownerColumns}
+              data = {[this.state.depositor]}
+              columns = {depositorColumns}
               className = "-striped"
               getTrProps = {this.getTrProps}
               showPagination = {false}

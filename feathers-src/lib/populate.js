@@ -207,22 +207,7 @@ module.exports = async () => {
     }
   });
 
-  const previousOwner = await app.service('owners').find({
-    query: {
-      _id: 1,
-    },
-  });
-
-  if (previousOwner.total === 1 && previousOwner.data[0].address != depositor) {
-    await app.service('owners').patch(1, {
-      address: depositor,
-    });
-  } else if (previousOwner.total === 0) {
-    await app.service('owners').create({
-      _id: 1,
-      address: depositor,
-    });
-  }
+  app.set('depositor', depositor);
 
   const patched = await app.service('range').patch(1, {
     home: currentHomeBlock + 1,
