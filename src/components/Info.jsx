@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import ReactTable from 'react-table';
-import {foreignEtherscanURL, homeEtherscanURL} from '../configuration';
+import config from '../configuration';
+
+const {foreignEtherscanURL, homeEtherscanURL} = config;
 
 class Info extends Component{
   constructor(props){
