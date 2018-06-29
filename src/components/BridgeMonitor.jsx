@@ -23,7 +23,7 @@ class BridgeMonitor extends Component{
       deposits: [],
       withdrawals: [],
       payments: [],
-      info: undefined
+      info: {},
     };
     client.service('information').get(1).then((info) => {
       this.setState({

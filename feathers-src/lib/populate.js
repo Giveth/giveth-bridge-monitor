@@ -163,7 +163,7 @@ module.exports = async () => {
 
   await asyncForEach(paymentEvents, async payment => {
     await homeContract.methods
-      .authorizedPayments(payment.idPayment)
+      .authorizedPayments(payment.returnValues.idPayment)
       .call()
       .then(p =>
         app.service('payments').create({
@@ -234,12 +234,12 @@ module.exports = async () => {
     .service('payments')
     .find({ paginate: false, query: { $and: [{ paid: false }, { canceled: false }] } })
     .then(payments =>
-      payments.map(p =>
+      payments.map(payment =>
         homeContract.methods
-          .authorizedPayments(p.event.returnValues.idPayment)
+          .authorizedPayments(payment.event.returnValues.idPayment)
           .call()
           .then(p => {
-            return app.service('payments').update(p._id, {
+            return app.service('payments').patch(payment._id, {
               paid: p.paid,
               canceled: p.canceled,
               earliestPayTime: Number(p.earliestPayTime) * 1000,
