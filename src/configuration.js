@@ -20,6 +20,12 @@ const configurations = {
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
   },
+  beta: {
+    title: 'beta',
+    feathersConnection: 'https://feathers.bridge.beta.giveth.io/',
+    homeEtherscanURL: 'https://etherscan.io/',
+    foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
+  },
   // mainnet: {
   //   title: 'mainnet',
   //   feathersConnection: 'https://feathers.mainnet.giveth.io',
