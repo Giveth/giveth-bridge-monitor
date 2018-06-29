@@ -121,7 +121,7 @@ class PaymentsTable extends Component {
         <div className="event-subcontainer">
           <span className="event-name">- Payments to Disburse -</span>
           <span className="event-name">
-            {this.payments
+            {this.props.payments
               .filter(p => this.getStatus(p) === 'Approved')
               .map(p => p.event.returnValues.idPayment)}
           </span>
