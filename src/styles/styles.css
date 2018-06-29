@@ -44,3 +44,7 @@ a {
 .ReactTable .rt-thead [role="columnheader"] {
 outline: 0;
 }
+
+.authorized-payments .ReactTable {
+  flex-grow: 1;
+}

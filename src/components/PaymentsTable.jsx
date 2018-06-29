@@ -19,8 +19,6 @@ class PaymentsTable extends Component {
       case 'Delayed':
         color = 'rgba(242, 210, 0, 0.5)';
         break;
-      default:
-        color = 'rgba(255, 255, 155, 1)';
     }
     return color;
   };
@@ -63,12 +61,14 @@ class PaymentsTable extends Component {
           {
             id: 'ids',
             Header: 'ID',
-            accessor: datum => datum.event.idPayment,
+            accessor: datum => datum.event.returnValues.idPayment,
+            width: 50,
           },
           {
             id: 'payTime',
             Header: 'Earliest Pay Time',
-            accessor: datum => new Date(datum.earliestPayTime),
+            accessor: datum => new Date(datum.earliestPayTime).toUTCString(),
+            width: 250,
           },
           {
             id: 'status',
@@ -76,7 +76,6 @@ class PaymentsTable extends Component {
             accessor: datum => this.getStatus(datum),
             // Cell: row => <span> {(row.original.matched && !row.original.hasDuplicates)? '\u2714' : 	'\u2716'} </span>,
             width: 100,
-            filterable: false,
           },
           {
             id: 'recipient',
@@ -87,6 +86,7 @@ class PaymentsTable extends Component {
             id: 'amount',
             Header: 'Amount',
             accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount),
+            width: 100,
           },
           {
             id: 'token',
@@ -110,41 +110,42 @@ class PaymentsTable extends Component {
     };
 
     return (
-      <div>
+      <div class="authorized-payments">
         <div className="event-subcontainer">
-          <span className="event-name">- Security Guard Last Checkin -</span>
-          <span className="event-name">{new Date(this.props.lastCheckin)}</span>
+          <span className="event-name">
+            <strong>- Security Guard Last Checkin -</strong>
+          </span>
+          <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
           {securityGuardNeedsToCheckin() && (
             <p style={style}>Security Guard needs to checkin so payments can go out!</p>
           )}
-        </div>
-        <div className="event-subcontainer">
-          <span className="event-name">- Payments to Disburse -</span>
           <span className="event-name">
-            {this.props.payments
+            <strong>- Payments to Disburse -</strong>
+          </span>
+          <span className="event-name">
+            [{this.props.payments
               .filter(p => this.getStatus(p) === 'Approved')
-              .map(p => p.event.returnValues.idPayment)}
+              .map(p => p.event.returnValues.idPayment)}]
           </span>
         </div>
         <div className="flex_container">
-          <div className="column">
-            <ReactTable
-              data={this.props.payments}
-              columns={columns}
-              showPagination={false}
-              sortable={true}
-              filterable={true}
-              pageSize={this.props.payments.length}
-              getTrProps={this.getTrProps}
-              collapseOnDataChange={false}
-              defaultSorted={[
-                {
-                  id: 'id',
-                  desc: true,
-                },
-              ]}
-            />
-          </div>
+          <ReactTable
+            style="flex-grow: 1;"
+            data={this.props.payments}
+            columns={columns}
+            showPagination={false}
+            sortable={true}
+            filterable={true}
+            pageSize={this.props.payments.length}
+            getTrProps={this.getTrProps}
+            collapseOnDataChange={false}
+            defaultSorted={[
+              {
+                id: 'id',
+                desc: true,
+              },
+            ]}
+          />
         </div>
       </div>
     );
