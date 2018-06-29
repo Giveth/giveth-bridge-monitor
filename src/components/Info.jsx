@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ReactTable from 'react-table';
+import {foreignEtherscanURL, homeEtherscanURL} from '../configuration';
 
 class Info extends Component{
   constructor(props){
@@ -74,8 +75,8 @@ class Info extends Component{
       }]
     }];
     //https://ropsten.etherscan.io/address/0x0cb06b291c40c76d7bee7c9f1faa4d6a4b338c49
-    const homeLink = this.props.contracts ? 'https://ropsten.etherscan.io/address/' + this.props.contracts.homeContract : null;
-    const foreignLink = this.props.contracts ? 'https://rinkeby.etherscan.io/address/' + this.props.contracts.foreignContract : null;
+    const homeLink = this.props.contracts ? `${homeEtherscanURL}address/` + this.props.contracts.homeContract : null;
+    const foreignLink = this.props.contracts ? `${foreignEtherscanURL}address/` + this.props.contracts.foreignContract : null;
 
     return(
       <div>
