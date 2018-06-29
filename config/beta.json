@@ -1,0 +1,14 @@
+{
+  "port": 3040,
+  "paginate": {
+    "default": 300,
+    "max": 1000
+  },
+  "pollTime": 300000,
+  "homeStartBlock" :  5875760,
+  "foreignStartBlock": 2548160,
+  "homeNodeURL": "https://mew.giveth.io",
+  "foreignNodeURL": "https://rinkeby.giveth.io",
+  "homeContractAddress" : "0xee7f3d55af5cb20c6e5f3c8196df0db6cc4fec52",
+  "foreignContractAddress" : "0xfF9CD5140e79377feB23f6DFaF1f8b558C0FE621"
+}
