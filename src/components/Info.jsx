@@ -9,7 +9,7 @@ class Info extends Component{
     super(props);
     this.state = {
       spenders: [],
-      depositor: undefined,
+      depositor: {},
     }
     this.loadEvents();
   }
