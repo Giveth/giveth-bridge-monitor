@@ -26,7 +26,7 @@ class BridgeMonitor extends Component {
     };
     client
       .service('information')
-      .get(1)
+      .find()
       .then(info => {
         this.setState({
           info,

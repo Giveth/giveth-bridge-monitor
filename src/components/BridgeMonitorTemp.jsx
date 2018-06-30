@@ -23,7 +23,7 @@ class BridgeMonitor extends Component{
     };
     client.service('information').find().then((info) => {
       this.setState({
-        info: info.data[0],
+        info: info,
       })
     });
   }

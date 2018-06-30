@@ -3,8 +3,7 @@ const Web3 = require('web3');
 module.exports = {
   before: {
     all: [],
-    find: [],
-    get: [
+    find: [
       async context => {
         const foreignNodeURL = context.app.get('foreignNodeURL');
         const foreignWeb3 = new Web3(foreignNodeURL);
@@ -14,6 +13,7 @@ module.exports = {
         return context;
       },
     ],
+    get: [],
     create: [],
     update: [],
     patch: [],
