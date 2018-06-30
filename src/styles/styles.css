@@ -48,3 +48,9 @@ outline: 0;
 .authorized-payments .ReactTable {
   flex-grow: 1;
 }
+
+.authorized-payments .alert {
+  background-color: rgba(176, 0, 0, 0.5);
+  color: #000;
+};
+

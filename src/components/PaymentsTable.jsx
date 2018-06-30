@@ -104,11 +104,6 @@ class PaymentsTable extends Component {
       );
     };
 
-    const style = {
-      ['background-color']: 'red',
-      color: 'black',
-    };
-
     return (
       <div class="authorized-payments">
         <div className="event-subcontainer">
@@ -117,7 +112,7 @@ class PaymentsTable extends Component {
           </span>
           <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
           {securityGuardNeedsToCheckin() && (
-            <p style={style}>Security Guard needs to checkin so payments can go out!</p>
+            <p class="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
