@@ -120,7 +120,8 @@ class PaymentsTable extends Component {
           <span className="event-name">
             [{this.props.payments
               .filter(p => this.getStatus(p) === 'Approved')
-              .map(p => p.event.returnValues.idPayment)}]
+              .map(p => p.event.returnValues.idPayment)
+              .join(', ')}]
           </span>
         </div>
         <div className="flex_container">
