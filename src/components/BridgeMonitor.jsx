@@ -82,11 +82,20 @@ class BridgeMonitor extends Component {
       <div>
         <Tabs forceRenderTabPanel={true}>
           <TabList>
+            <Tab>Authorized Payments</Tab>
             <Tab>Home &#8594; Foreign</Tab>
             <Tab>Foreign &#8594; Home </Tab>
-            <Tab>Authorized Payments</Tab>
             <Tab> Info and Utilities </Tab>
           </TabList>
+
+          <TabPanel>
+            <div>
+              <PaymentsTable
+                payments={this.state.payments}
+                lastCheckin={this.state.info.securityGuardLastCheckin}
+              />
+            </div>
+          </TabPanel>
 
           <TabPanel>
             <div className="flex_container">
@@ -133,15 +142,7 @@ class BridgeMonitor extends Component {
               </div>
             </div>
           </TabPanel>
-          <TabPanel>
-            <div>
-              <PaymentsTable
-                payments={this.state.payments}
-                lastCheckin={this.state.info.securityGuardLastCheckin}
-              />
-            </div>
-          </TabPanel>
-
+          
           <TabPanel>
             <Info client={this.state.client} contracts={this.state.info} />
           </TabPanel>
