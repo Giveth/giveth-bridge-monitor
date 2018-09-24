@@ -105,14 +105,14 @@ class PaymentsTable extends Component {
     };
 
     return (
-      <div class="authorized-payments">
+      <div className="authorized-payments">
         <div className="event-subcontainer">
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
           </span>
           <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
           {securityGuardNeedsToCheckin() && (
-            <p class="alert">Security Guard needs to checkin so payments can go out!</p>
+            <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
@@ -126,7 +126,7 @@ class PaymentsTable extends Component {
         </div>
         <div className="flex_container">
           <ReactTable
-            style="flex-grow: 1;"
+            flexGrow={1}
             data={this.props.payments}
             columns={columns}
             showPagination={false}
