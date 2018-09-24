@@ -61,7 +61,7 @@ class PaymentsTable extends Component {
           {
             id: 'ids',
             Header: 'ID',
-            accessor: datum => datum.event.returnValues.idPayment,
+            accessor: datum => parseInt(datum.event.returnValues.idPayment),
             width: 50,
           },
           {
@@ -137,7 +137,7 @@ class PaymentsTable extends Component {
             collapseOnDataChange={false}
             defaultSorted={[
               {
-                id: 'id',
+                id: 'ids',
                 desc: true,
               },
             ]}
