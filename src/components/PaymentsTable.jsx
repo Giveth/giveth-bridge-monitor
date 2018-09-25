@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import Web3 from 'web3';
+import feathers from '@feathersjs/client';
+import io from 'socket.io-client';
+import config from '../configuration';
+
+const client = feathers();
+client.configure(feathers.socketio(io(config.feathersDappConnection)));
+
 
 class PaymentsTable extends Component {
   getRowColor = row => {
@@ -61,7 +68,7 @@ class PaymentsTable extends Component {
           {
             id: 'ids',
             Header: 'ID',
-            accessor: datum => datum.event.returnValues.idPayment,
+            accessor: datum => parseInt(datum.event.returnValues.idPayment),
             width: 50,
           },
           {
@@ -69,6 +76,7 @@ class PaymentsTable extends Component {
             Header: 'Earliest Pay Time',
             accessor: datum => new Date(datum.earliestPayTime).toUTCString(),
             width: 250,
+            sortable: false,
           },
           {
             id: 'status',
@@ -85,13 +93,19 @@ class PaymentsTable extends Component {
           {
             id: 'amount',
             Header: 'Amount',
-            accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount),
+            accessor: datum => parseFloat(Web3.utils.fromWei(datum.event.returnValues.amount)),
             width: 100,
           },
           {
             id: 'token',
             Header: 'Token',
             accessor: datum => datum.event.returnValues.token,
+          },
+          {
+            id: 'reference',
+            Header: 'Reference',
+            accessor: datum => datum.event.returnValues.reference,
+            show: false,
           },
         ],
       },
@@ -105,14 +119,14 @@ class PaymentsTable extends Component {
     };
 
     return (
-      <div class="authorized-payments">
+      <div className="authorized-payments">
         <div className="event-subcontainer">
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
           </span>
           <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
           {securityGuardNeedsToCheckin() && (
-            <p class="alert">Security Guard needs to checkin so payments can go out!</p>
+            <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
@@ -124,9 +138,10 @@ class PaymentsTable extends Component {
               .join(', ')}]
           </span>
         </div>
+        <div className="event-name">Please click on any row to show the related milestone.</div>
         <div className="flex_container">
           <ReactTable
-            style="flex-grow: 1;"
+            flexGrow={1}
             data={this.props.payments}
             columns={columns}
             showPagination={false}
@@ -137,10 +152,29 @@ class PaymentsTable extends Component {
             collapseOnDataChange={false}
             defaultSorted={[
               {
-                id: 'id',
+                id: 'ids',
                 desc: true,
               },
             ]}
+            getTdProps={(state, rowInfo, column, instance) => {
+              return {
+                onClick: async e => {
+                  try {
+                    const resp = await client.service('milestones').find({
+                      query: {
+                        txHash: rowInfo.row.reference,
+                      },
+                    });
+                    const milestone = resp.data[0]
+                    const url = `https://beta.giveth.io/campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
+                    window.open(url, '_blank');
+                  } catch (e2) {
+                    console.error(e2);
+                  }
+                }
+
+              };
+            }}
           />
         </div>
       </div>
