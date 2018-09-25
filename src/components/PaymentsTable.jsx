@@ -61,7 +61,7 @@ class PaymentsTable extends Component {
           {
             id: 'ids',
             Header: 'ID',
-            accessor: datum => datum.event.returnValues.idPayment,
+            accessor: datum => parseInt(datum.event.returnValues.idPayment),
             width: 50,
           },
           {
@@ -69,6 +69,7 @@ class PaymentsTable extends Component {
             Header: 'Earliest Pay Time',
             accessor: datum => new Date(datum.earliestPayTime).toUTCString(),
             width: 250,
+            sortable: false,
           },
           {
             id: 'status',
@@ -85,7 +86,7 @@ class PaymentsTable extends Component {
           {
             id: 'amount',
             Header: 'Amount',
-            accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount),
+            accessor: datum => parseFloat(Web3.utils.fromWei(datum.event.returnValues.amount)),
             width: 100,
           },
           {
@@ -105,14 +106,14 @@ class PaymentsTable extends Component {
     };
 
     return (
-      <div class="authorized-payments">
+      <div className="authorized-payments">
         <div className="event-subcontainer">
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
           </span>
           <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
           {securityGuardNeedsToCheckin() && (
-            <p class="alert">Security Guard needs to checkin so payments can go out!</p>
+            <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
@@ -126,7 +127,7 @@ class PaymentsTable extends Component {
         </div>
         <div className="flex_container">
           <ReactTable
-            style="flex-grow: 1;"
+            flexGrow={1}
             data={this.props.payments}
             columns={columns}
             showPagination={false}
@@ -137,7 +138,7 @@ class PaymentsTable extends Component {
             collapseOnDataChange={false}
             defaultSorted={[
               {
-                id: 'id',
+                id: 'ids',
                 desc: true,
               },
             ]}
