@@ -69,6 +69,7 @@ class PaymentsTable extends Component {
             Header: 'Earliest Pay Time',
             accessor: datum => new Date(datum.earliestPayTime).toUTCString(),
             width: 250,
+            sortable: false,
           },
           {
             id: 'status',
@@ -85,7 +86,7 @@ class PaymentsTable extends Component {
           {
             id: 'amount',
             Header: 'Amount',
-            accessor: datum => Web3.utils.fromWei(datum.event.returnValues.amount),
+            accessor: datum => parseFloat(Web3.utils.fromWei(datum.event.returnValues.amount)),
             width: 100,
           },
           {
