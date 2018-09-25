@@ -7,22 +7,26 @@ const configurations = {
   localhost: {
     title: 'localhost',
     feathersConnection: 'http://localhost:3030',
+    feathersDappConnection: 'https://localhost:3030',
   },
   develop: {
     title: 'develop',
     feathersConnection: 'https://feathers.bridge.develop.giveth.io/',
+    feathersDappConnection: 'https://feathers.develop.giveth.io/',
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
   },
   release: {
     title: 'release',
     feathersConnection: 'https://feathers.bridge.release.giveth.io/',
+    feathersDappConnection: 'https://feathers.release.giveth.io/',
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
   },
   beta: {
     title: 'beta',
     feathersConnection: 'https://feathers.bridge.beta.giveth.io/',
+    feathersDappConnection: 'https://feathers.beta.giveth.io/',
     homeEtherscanURL: 'https://etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
   },

@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import Web3 from 'web3';
+import feathers from '@feathersjs/client';
+import io from 'socket.io-client';
+import config from '../configuration';
+
+const client = feathers();
+client.configure(feathers.socketio(io(config.feathersDappConnection)));
+
 
 class PaymentsTable extends Component {
   getRowColor = row => {
@@ -94,6 +101,12 @@ class PaymentsTable extends Component {
             Header: 'Token',
             accessor: datum => datum.event.returnValues.token,
           },
+          {
+            id: 'reference',
+            Header: 'Reference',
+            accessor: datum => datum.event.returnValues.reference,
+            show: false,
+          },
         ],
       },
     ];
@@ -125,6 +138,7 @@ class PaymentsTable extends Component {
               .join(', ')}]
           </span>
         </div>
+        <div className="event-name">Please click on any row to show the related milestone.</div>
         <div className="flex_container">
           <ReactTable
             flexGrow={1}
@@ -142,6 +156,25 @@ class PaymentsTable extends Component {
                 desc: true,
               },
             ]}
+            getTdProps={(state, rowInfo, column, instance) => {
+              return {
+                onClick: async e => {
+                  try {
+                    const resp = await client.service('milestones').find({
+                      query: {
+                        txHash: rowInfo.row.reference,
+                      },
+                    });
+                    const milestone = resp.data[0]
+                    const url = `https://beta.giveth.io/campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
+                    window.open(url, '_blank');
+                  } catch (e2) {
+                    console.error(e2);
+                  }
+                }
+
+              };
+            }}
           />
         </div>
       </div>
