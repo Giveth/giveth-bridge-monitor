@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ReactTable from 'react-table';
+import DonationLink from './DonationLink'
 
 // import 'react-table/react-table.css';
 // import "../styles/styles.css";
@@ -38,12 +39,15 @@ class EventDetail extends Component{
       borderColor: 'rgba(160, 160, 160, 0.7)',
       borderRadius: '5px'
     }
+
     const etherscanLink = this.props.etherscanURL + 'tx/' + this.props.data.event.transactionHash;
     return (
       <div className = "event-subcontainer" style = {style}>
         <span className = "event-name">- {this.props.data.event.event} Event -</span>
-        <span className = "event-name"><a target = "_blank" href = {etherscanLink}> Etherscan </a></span>
-
+        {this.props.data.event.event === 'Deposit' && (
+          <DonationLink txHash = {this.props.data.event.transactionHash} type = {this.props.data.event.event} />
+         )}
+        <span className = "event-name"><a target = "_blank" href = {etherscanLink}>Etherscan Link</a></span>
         <ReactTable
           data = {returnValuesData}
           columns = {returnValuesColumns}
