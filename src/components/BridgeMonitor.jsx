@@ -102,7 +102,7 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.deposits}
-                  header="Incoming Deposits (Mainnet) &nbsp;&rarr;"
+                  header="Incoming Deposits &nbsp;&rarr;"
                   duplicateMessage="The home transaction of this deposit has other deposits that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.foreignEtherscanURL}
@@ -135,7 +135,7 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.withdrawals}
-                  header="&rarr;&nbsp; Payments Authorized (Mainnet)"
+                  header="&rarr;&nbsp; Payments Authorized "
                   duplicateMessage="This withdrawal event has multiple payments that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.foreignEtherscanURL}
