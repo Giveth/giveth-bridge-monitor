@@ -15,7 +15,9 @@ class BridgeMonitor extends Component {
 
     const socket = io(config.feathersConnection);
     const client = feathers();
-    client.configure(feathers.socketio(socket));
+    client.configure(
+      feathers.socketio(socket, { timeout: 30000, pingTimeout: 30000, upgradeTimeout: 30000 }),
+    );
     this.state = {
       client,
       donations: [],
@@ -41,7 +43,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('donations')
-      .find()
+      .find({ query: { sort: { 'event.blockNumber': 1 } } })
       .then(donations => {
         this.setState({
           donations: donations.data,
@@ -50,7 +52,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('deposits')
-      .find()
+      .find({ query: { sort: { 'event.blockNumber': 1 } } })
       .then(deposits => {
         this.setState({
           deposits: deposits.data,
@@ -59,7 +61,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('withdrawals')
-      .find()
+      .find({ query: { sort: { 'event.blockNumber': 1 } } })
       .then(withdrawals => {
         this.setState({
           withdrawals: withdrawals.data,
@@ -68,7 +70,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('payments')
-      .find()
+      .find({ query: { sort: { 'event.blockNumber': 1 } } })
       .then(payments => {
         this.setState({
           payments: payments.data,
