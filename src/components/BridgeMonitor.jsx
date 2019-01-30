@@ -99,24 +99,25 @@ class BridgeMonitor extends Component {
 
           <TabPanel>
             <div className="flex_container">
-              <div className="column">
+            <div className="column">
+                <EventTable
+                  events={this.state.donations}
+                  header={config.homeNetworkName + " Incoming Deposits"}
+                  duplicateMessage="This donation event has multiple deposits that reference it as their home transaction!"
+                  duplicateTable={true}
+                  etherscanURL={config.homeEtherscanURL}
+                />
+            </div>
+            <div className="column">
                 <EventTable
                   events={this.state.deposits}
-                  header="Incoming Deposits &nbsp;&rarr;"
+                  header={config.foreignNetworkName + " Bridgeside Deposits"}
                   duplicateMessage="The home transaction of this deposit has other deposits that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.foreignEtherscanURL}
                 />
               </div>
-              <div className="column">
-                <EventTable
-                  events={this.state.donations}
-                  header="&rarr;&nbsp; Bridgeside Deposits"
-                  duplicateMessage="This donation event has multiple deposits that reference it as their home transaction!"
-                  duplicateTable={true}
-                  etherscanURL={config.homeEtherscanURL}
-                />
-              </div>
+              
               
             </div>
           </TabPanel>
@@ -125,22 +126,22 @@ class BridgeMonitor extends Component {
             <div className="flex_container">
               <div className="column">
                 <EventTable
-                  events={this.state.payments}
-                  header="Bridgeside Payments &nbsp;&rarr;"
-                  duplicateMessage="The home transaction of this payment has other payments that also reference it!"
-                  duplicateTable={false}
-                  etherscanURL={config.homeEtherscanURL}
-                />
-              </div>
-              <div className="column">
-                <EventTable
                   events={this.state.withdrawals}
-                  header="&rarr;&nbsp; Payments Authorized "
+                  header={config.foreignNetworkName + " Payments Authorized"}
                   duplicateMessage="This withdrawal event has multiple payments that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.foreignEtherscanURL}
                 />
               </div> 
+              <div className="column">
+                <EventTable
+                  events={this.state.payments}
+                  header={config.homeNetworkName + " Payments Authorized"}
+                  duplicateMessage="The home transaction of this payment has other payments that also reference it!"
+                  duplicateTable={false}
+                  etherscanURL={config.homeEtherscanURL}
+                />
+              </div>
             </div>
           </TabPanel>
           
