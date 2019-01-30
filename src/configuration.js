@@ -16,6 +16,8 @@ const configurations = {
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
     actualDappURL: 'https://develop.giveth.io/',
+    homeNetworkName: 'Ropsten',
+    foreignNetworkName: 'Rinkeby',
   },
   release: {
     title: 'release',
@@ -24,6 +26,8 @@ const configurations = {
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
     actualDappURL: 'https://release.giveth.io/',
+    homeNetworkName: 'Ropsten',
+    foreignNetworkName: 'Rinkeby',
   },
   beta: {
     title: 'beta',
@@ -32,6 +36,8 @@ const configurations = {
     homeEtherscanURL: 'https://etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
     actualDappURL: 'https://beta.giveth.io/',
+    homeNetworkName: 'Ropsten',
+    foreignNetworkName: 'Rinkeby',
   },
   // mainnet: {
   //   title: 'mainnet',
