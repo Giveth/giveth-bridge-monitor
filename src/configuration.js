@@ -1,5 +1,5 @@
 const {
-  REACT_APP_ENVIRONMENT = 'beta', // optional
+  REACT_APP_ENVIRONMENT = 'localhost', // optional
   REACT_APP_FEATHERJS_CONNECTION_URL,
 } = process.env;
 
