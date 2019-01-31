@@ -15,9 +15,7 @@ class BridgeMonitor extends Component {
 
     const socket = io(config.feathersConnection);
     const client = feathers();
-    client.configure(
-      feathers.socketio(socket, { timeout: 30000, pingTimeout: 30000, upgradeTimeout: 30000 }),
-    );
+    client.configure(feathers.socketio(socket));
     this.state = {
       client,
       donations: [],
@@ -43,7 +41,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('donations')
-      .find({ query: { $sort: { 'event.blockNumber': -1 } } })
+      .find()
       .then(donations => {
         this.setState({
           donations: donations.data,
@@ -52,7 +50,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('deposits')
-      .find({ query: { $sort: { 'event.blockNumber': -1 } } })
+      .find()
       .then(deposits => {
         this.setState({
           deposits: deposits.data,
@@ -61,7 +59,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('withdrawals')
-      .find({ query: { $sort: { 'event.blockNumber': -1 } } })
+      .find()
       .then(withdrawals => {
         this.setState({
           withdrawals: withdrawals.data,
@@ -70,7 +68,7 @@ class BridgeMonitor extends Component {
 
     client
       .service('payments')
-      .find({ query: { $sort: { 'event.blockNumber': -1 } } })
+      .find()
       .then(payments => {
         this.setState({
           payments: payments.data,
@@ -85,8 +83,8 @@ class BridgeMonitor extends Component {
         <Tabs forceRenderTabPanel={true}>
           <TabList>
             <Tab>Authorized Payments</Tab>
-            <Tab>Home &#8594; Foreign</Tab>
-            <Tab>Foreign &#8594; Home </Tab>
+            <Tab>Incoming Transactions</Tab>
+            <Tab>Outgoing Transactions</Tab>
             <Tab> Info and Utilities </Tab>
           </TabList>
 
@@ -101,24 +99,26 @@ class BridgeMonitor extends Component {
 
           <TabPanel>
             <div className="flex_container">
-              <div className="column">
+            <div className="column">
                 <EventTable
                   events={this.state.donations}
-                  header="Home Donations"
+                  header={config.homeNetworkName + " Incoming Deposits"}
                   duplicateMessage="This donation event has multiple deposits that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.homeEtherscanURL}
                 />
-              </div>
-              <div className="column">
+            </div>
+            <div className="column">
                 <EventTable
                   events={this.state.deposits}
-                  header="Foreign Deposits"
+                  header={config.foreignNetworkName + " Bridgeside Deposits"}
                   duplicateMessage="The home transaction of this deposit has other deposits that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.foreignEtherscanURL}
                 />
               </div>
+              
+              
             </div>
           </TabPanel>
 
@@ -127,16 +127,16 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.withdrawals}
-                  header="Foreign Withdrawals"
+                  header={config.foreignNetworkName + " Payments Authorized"}
                   duplicateMessage="This withdrawal event has multiple payments that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.foreignEtherscanURL}
                 />
-              </div>
+              </div> 
               <div className="column">
                 <EventTable
                   events={this.state.payments}
-                  header="Home Payments"
+                  header={config.homeNetworkName + " Payments Authorized"}
                   duplicateMessage="The home transaction of this payment has other payments that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.homeEtherscanURL}
