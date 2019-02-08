@@ -15,7 +15,9 @@ class BridgeMonitor extends Component {
 
     const socket = io(config.feathersConnection);
     const client = feathers();
-    client.configure(feathers.socketio(socket));
+    client.configure(
+      feathers.socketio(socket, { timeout: 30000, pingTimeout: 30000, upgradeTimeout: 30000 }),
+    );
     this.state = {
       client,
       donations: [],
@@ -102,7 +104,7 @@ class BridgeMonitor extends Component {
             <div className="column">
                 <EventTable
                   events={this.state.donations}
-                  header={config.homeNetworkName + " Incoming Deposits"}
+                  header={config.homeNetworkName + " Deposits"}
                   duplicateMessage="This donation event has multiple deposits that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.homeEtherscanURL}
@@ -111,7 +113,7 @@ class BridgeMonitor extends Component {
             <div className="column">
                 <EventTable
                   events={this.state.deposits}
-                  header={config.foreignNetworkName + " Bridgeside Deposits"}
+                  header={config.foreignNetworkName + " Deposits"}
                   duplicateMessage="The home transaction of this deposit has other deposits that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.foreignEtherscanURL}
@@ -127,7 +129,7 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.withdrawals}
-                  header={config.foreignNetworkName + " Payments Authorized"}
+                  header={config.foreignNetworkName + " Withdrawls"}
                   duplicateMessage="This withdrawal event has multiple payments that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.foreignEtherscanURL}
@@ -136,7 +138,7 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.payments}
-                  header={config.homeNetworkName + " Payments Authorized"}
+                  header={config.homeNetworkName + " Withdrawls"}
                   duplicateMessage="The home transaction of this payment has other payments that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.homeEtherscanURL}

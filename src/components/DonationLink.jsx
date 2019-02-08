@@ -18,12 +18,9 @@ class DonationLink extends Component {
       .find({
         query: {
           txHash: props.txHash,
-          //status: "Committed"
         }
       })
       .then(donationResp => {
-        //console.log(donationResp);
-        //console.log(donationResp.data.length);
         const dataArrayNum = donationResp.data.length - 1;
         if (donationResp.data[dataArrayNum].ownerType === "milestone") {
           client
@@ -49,7 +46,7 @@ class DonationLink extends Component {
               donationResp.data[dataArrayNum].ownerTypeId
             }`
           },()=>{
-            //console.log(this.state.donationUrl);
+
           });
         } else {
           this.setState({
@@ -74,7 +71,4 @@ class DonationLink extends Component {
   }
 }
 
-
-
 export default DonationLink;
-
