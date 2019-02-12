@@ -85,8 +85,8 @@ class BridgeMonitor extends Component {
         <Tabs forceRenderTabPanel={true}>
           <TabList>
             <Tab>Authorized Payments</Tab>
-            <Tab>Incoming Transactions</Tab>
-            <Tab>Outgoing Transactions</Tab>
+            <Tab>{config.homeNetworkName + " -> " + config.foreignNetworkName}</Tab>
+            <Tab>{config.foreignNetworkName + " -> " + config.homeNetworkName}</Tab>
             <Tab> Info and Utilities </Tab>
           </TabList>
 
