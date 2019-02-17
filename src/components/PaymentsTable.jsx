@@ -138,7 +138,7 @@ class PaymentsTable extends Component {
               .join(', ')}]
           </span>
         </div>
-        <div className="event-name"><strong>You can click on any row to show the related milestone. Please make sure you have enabled pop-ups on this site.</strong></div>
+        <div className="event-name"><strong>Click on any row to show the related milestone.</strong><br></br>Please make sure you have enabled pop-ups on this site.</div>
         <div className="flex_container">
           <ReactTable
             flexGrow={1}
@@ -166,7 +166,7 @@ class PaymentsTable extends Component {
                       },
                     });
                     const milestone = resp.data[0]
-                    const url = `https://beta.giveth.io/campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
+                    const url = `${config.actualDappURL}campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
                     window.open(url, '_blank');
                   } catch (e2) {
                     console.error(e2);

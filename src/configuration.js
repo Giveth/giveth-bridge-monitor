@@ -15,6 +15,9 @@ const configurations = {
     feathersDappConnection: 'https://feathers.develop.giveth.io/',
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
+    actualDappURL: 'https://develop.giveth.io/',
+    homeNetworkName: 'Ropsten',
+    foreignNetworkName: 'Rinkeby',
   },
   release: {
     title: 'release',
@@ -22,6 +25,9 @@ const configurations = {
     feathersDappConnection: 'https://feathers.release.giveth.io/',
     homeEtherscanURL: 'https://ropsten.etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
+    actualDappURL: 'https://release.giveth.io/',
+    homeNetworkName: 'Ropsten',
+    foreignNetworkName: 'Rinkeby',
   },
   beta: {
     title: 'beta',
@@ -29,6 +35,9 @@ const configurations = {
     feathersDappConnection: 'https://feathers.beta.giveth.io/',
     homeEtherscanURL: 'https://etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
+    actualDappURL: 'https://beta.giveth.io/',
+    homeNetworkName: 'Mainnet',
+    foreignNetworkName: 'Rinkeby',
   },
   // mainnet: {
   //   title: 'mainnet',
@@ -43,3 +52,4 @@ const config = Object.assign({}, configurations[REACT_APP_ENVIRONMENT]);
 config.feathersConnection = REACT_APP_FEATHERJS_CONNECTION_URL || config.feathersConnection;
 
 export default config;
+
