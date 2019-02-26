@@ -86,10 +86,10 @@ class Info extends Component{
           <span className = "event-name">- Contracts -</span>
           <a href = {homeLink}
             target="_blank"
-            className = "event-name"> Home Contract </a>
+            className = "event-name"> {config.homeNetworkName} Contract </a>
           <a href = {foreignLink}
               target="_blank"
-              className = "event-name"> Foreign Contract </a>
+              className = "event-name"> {config.foreignNetworkName} Contract </a>
         </div>
         <div className = "flex_container">
           <div className = "column">

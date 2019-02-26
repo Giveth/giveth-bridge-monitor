@@ -51,6 +51,12 @@ class PaymentsTable extends Component {
     return 'Pending';
   };
 
+  getTokenName = (tokenAddress) => {
+    if (tokenAddress === "0x0000000000000000000000000000000000000000") return 'ETH';
+    else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'DAI';
+    else return tokenAddress;
+  };
+
   render() {
     const columns = [
       {
@@ -75,7 +81,7 @@ class PaymentsTable extends Component {
             id: 'payTime',
             Header: 'Earliest Pay Time',
             accessor: datum => new Date(datum.earliestPayTime).toUTCString(),
-            width: 250,
+            width: 220,
             sortable: false,
           },
           {
@@ -94,12 +100,13 @@ class PaymentsTable extends Component {
             id: 'amount',
             Header: 'Amount',
             accessor: datum => parseFloat(Web3.utils.fromWei(datum.event.returnValues.amount)),
-            width: 100,
+            width: 150,
           },
           {
             id: 'token',
             Header: 'Token',
-            accessor: datum => datum.event.returnValues.token,
+            accessor: datum => this.getTokenName(datum.event.returnValues.token),
+            width: 60,
           },
           {
             id: 'reference',
