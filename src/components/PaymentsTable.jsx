@@ -94,7 +94,7 @@ class PaymentsTable extends Component {
           {
             id: 'recipient',
             Header: 'Recipient',
-            accessor: datum => datum.event.returnValues.recipient,
+            accessor: datum => this.props.recipients.hasOwnProperty(datum.event.returnValues.recipient) ? this.props.recipients[datum.event.returnValues.recipient] : datum.event.returnValues.recipient
           },
           {
             id: 'amount',
