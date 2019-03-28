@@ -87,16 +87,34 @@ class BridgeMonitor extends Component {
         });
       });
 
+    this.fetchPayments(0, 10);
+
+    setTimeout(this.loadEvents, 1000 * 60 * 5);
+  };
+
+  fetchPayments = async (page, pageSize) => {
+    const client = this.state.bridge_client;
     client
       .service('payments')
-      .find()
+      .find({
+        query: {
+          $limit: pageSize * 2,
+          $skip: (page) * (pageSize * 2),
+          $sort: {
+            earliestPayTime: -1
+          }
+        }
+      })
       .then(payments => {
         var data = payments.data;
         var recipients = [];
         data.forEach(element => {
           if (element.event.returnValues) {
             var recipient = element.event.returnValues.recipient;
-            if (!recipients.includes(recipient)) {
+            if (
+              !recipients.includes(recipient) &&
+              !this.state.recipients.hasOwnProperty(recipient)
+            ) {
               recipients.push(recipient);
               this.state.dapp_client
                 .service('users')
@@ -107,21 +125,21 @@ class BridgeMonitor extends Component {
                 })
                 .then(result => {
                   let r = Object.assign({}, this.state.recipients);
-                  console.log(result.data);
                   if (result.data.length > 0 && result.data[0].name) {
                     r[recipient] = result.data[0].name;
                     this.setState({ recipients: r });
-                    console.log(r);
                   }
                 });
             }
           }
         });
+        var p = this.state.payments.slice().concat(payments.data);
         this.setState({
-          payments: payments.data
+          payments: p.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj["_id"]).indexOf(obj["_id"]) === pos;
+          })
         });
       });
-    setTimeout(this.loadEvents, 1000 * 60 * 5);
   };
 
   render() {
@@ -142,6 +160,7 @@ class BridgeMonitor extends Component {
           <TabPanel>
             <div>
               <PaymentsTable
+                fetchPayments={this.fetchPayments}
                 recipients={this.state.recipients}
                 payments={this.state.payments}
                 lastCheckin={this.state.info.securityGuardLastCheckin}
