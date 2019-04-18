@@ -7,7 +7,7 @@ const HomeBridgeABI = HomeBridgeContract.compilerOutput.abi;
 const ForeignBridgeContract = require('giveth-bridge/build/ForeignGivethBridge.json');
 const ForeignBridgeABI = ForeignBridgeContract.compilerOutput.abi;
 
-module.exports = async () => {
+const populate = async () => {
   const homeNodeURL = app.get('homeNodeURL');
   const foreignNodeURL = app.get('foreignNodeURL');
 
@@ -63,12 +63,12 @@ module.exports = async () => {
   }
   const homeRange = {
     fromBlock: range.home,
-    toBlock: currentHomeBlock,
+    toBlock: Math.min(currentHomeBlock, range.home + 500000),
   };
 
   const foreignRange = {
     fromBlock: range.foreign,
-    toBlock: currentForeignBlock,
+    toBlock: Math.min(currentForeignBlock, range.foreign + 500000),
   };
 
   console.log('Getting past events...');
@@ -102,7 +102,8 @@ module.exports = async () => {
   }
   console.log('Success!');
 
-  const securityGuardLastCheckin = await homeContract.methods.securityGuardLastCheckin().call() * 1000;
+  const securityGuardLastCheckin =
+    (await homeContract.methods.securityGuardLastCheckin().call()) * 1000;
   app.set('securityGuardLastCheckin', securityGuardLastCheckin);
 
   console.log('Blockchain interaction finished, creating records...');
@@ -126,7 +127,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
-      _id: donation.transactionHash,
+      _id: donation.id,
     });
   });
 
@@ -137,7 +138,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
-      _id: donation.transactionHash,
+      _id: donation.id,
     });
   });
 
@@ -147,7 +148,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
-      _id: deposit.transactionHash,
+      _id: deposit.id,
     });
   });
 
@@ -157,7 +158,7 @@ module.exports = async () => {
       matched: false,
       matches: [],
       hasDuplicates: false,
-      _id: withdrawal.transactionHash,
+      _id: withdrawal.id,
     });
   });
 
@@ -175,7 +176,7 @@ module.exports = async () => {
           earliestPayTime: Number(p.earliestPayTime) * 1000,
           securityGuardDelay: Number(p.securityGuardDelay),
           hasDuplicates: false,
-          _id: payment.transactionHash,
+          _id: payment.id,
         }),
       );
   });
@@ -210,8 +211,8 @@ module.exports = async () => {
   app.set('depositor', depositor);
 
   const patched = await app.service('range').patch(1, {
-    home: currentHomeBlock + 1,
-    foreign: currentForeignBlock + 1,
+    home: homeRange.toBlock + 1,
+    foreign: foreignRange.toBlock + 1,
   });
 
   // update payment status
@@ -236,5 +237,11 @@ module.exports = async () => {
     .then(promises => Promise.all(promises));
 
   console.log('Success!');
+
+  if (currentForeignBlock > foreignRange.toBlock || currentHomeBlock > homeRange.toBlock) {
+    return await populate();
+  }
   return true;
 };
+
+module.exports = populate;

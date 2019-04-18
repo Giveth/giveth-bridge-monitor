@@ -76,7 +76,7 @@ class BridgeMonitor extends Component {
           payments: payments.data,
         });
       });
-    setTimeout(this.loadEvents, 5000);
+    setTimeout(this.loadEvents, 150000);
   };
 
   render() {
