@@ -13,6 +13,9 @@ module.exports = {
         const payments = await context.app.service('payments').find({
           query: {
             'event.returnValues.reference': hash,
+            'event.returnValues.recipient': context.data.event.returnValues.recipient,
+            'event.returnValues.token': context.data.event.returnValues.token,
+            'event.returnValues.amount': context.data.event.returnValues.amount,
           }
         });
 
@@ -52,7 +55,7 @@ module.exports = {
         // (there SHOULD only be one, and it SHOULD be the first, but this is a safeguard)
         for (let i = 0; i < matches.length; i++){
           if (matches[i].patch) {
-            paymentToPatch = matches[i].hash;
+            paymentToPatch = matches[i]._id;
             index = i;
             break;
           }
