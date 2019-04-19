@@ -10,6 +10,12 @@ client.configure(feathers.socketio(io(config.feathersDappConnection)));
 
 
 class PaymentsTable extends Component {
+  
+  componentDidMount() {
+    this.page = 0;
+    this.pageSize = 10;
+  }
+
   getRowColor = row => {
     let color;
     const status = this.getStatus(row.original);
@@ -94,7 +100,7 @@ class PaymentsTable extends Component {
           {
             id: 'recipient',
             Header: 'Recipient',
-            accessor: datum => datum.event.returnValues.recipient,
+            accessor: datum => (this.props.recipients.hasOwnProperty(datum.event.returnValues.recipient) ? this.props.recipients[datum.event.returnValues.recipient] : "Unknown") + " - " + datum.event.returnValues.recipient
           },
           {
             id: 'amount',
@@ -151,10 +157,24 @@ class PaymentsTable extends Component {
             flexGrow={1}
             data={this.props.payments}
             columns={columns}
-            showPagination={false}
+            showPagination={true}
+            showPaginationBottom={true}
+            defaultPageSize={10}
+            onPageChange={page => {
+              if(page > this.page){
+                this.props.fetchPayments(page, this.pageSize);
+              }
+              this.page = page;
+            }}
+            onPageSizeChange={pageSize => {
+              if(pageSize > this.pageSize){
+                this.props.fetchPayments(this.page, pageSize);
+              }
+              this.pageSize = pageSize;
+            }}
             sortable={true}
             filterable={true}
-            pageSize={this.props.payments.length}
+            //pageSize={this.props.payments.length}
             getTrProps={this.getTrProps}
             collapseOnDataChange={false}
             defaultSorted={[
