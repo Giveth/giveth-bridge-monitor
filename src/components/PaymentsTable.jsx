@@ -100,7 +100,11 @@ class PaymentsTable extends Component {
           {
             id: 'recipient',
             Header: 'Recipient',
-            accessor: datum => (this.props.recipients.hasOwnProperty(datum.event.returnValues.recipient) ? this.props.recipients[datum.event.returnValues.recipient] : "Unknown") + " - " + datum.event.returnValues.recipient
+            Cell: ({ row }) => {
+              return (<a target="_blank" rel="noopener noreferrer" href={(`${config.actualDappURL}profile/${row._original.event.returnValues.recipient}`)}>
+                {(this.props.recipients.hasOwnProperty(row._original.event.returnValues.recipient) ? this.props.recipients[row._original.event.returnValues.recipient] : "Unknown") + " - " + row._original.event.returnValues.recipient}
+              </a>)
+            },
           },
           {
             id: 'amount',
@@ -115,18 +119,12 @@ class PaymentsTable extends Component {
             width: 60,
           },
           {
-            id: 'reference',
-            Header: 'Reference',
-            accessor: datum => datum.event.returnValues.reference,
-            show: false,
-          },
-          {
             id: 'link',
             Header: 'Link',
             width: 80,
             Cell: ({ row }) => {
-              if (this.props.milestones.hasOwnProperty(row.reference)) {
-                return (<a target="_blank" href={this.props.milestones[row.reference]}>Milestone</a>)
+              if (this.props.milestones.hasOwnProperty(row._original.event.returnValues.reference)) {
+                return (<a target="_blank" rel="noopener noreferrer" href={this.props.milestones[row._original.event.returnValues.reference]}>Milestone</a>)
               } else {
                 return "Unknown"
               }
@@ -186,7 +184,6 @@ class PaymentsTable extends Component {
             }}
             sortable={true}
             filterable={true}
-            //pageSize={this.props.payments.length}
             getTrProps={this.getTrProps}
             collapseOnDataChange={false}
             defaultSorted={[
