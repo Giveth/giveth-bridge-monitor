@@ -43,7 +43,8 @@ class BridgeMonitor extends Component {
       withdrawals: [],
       payments: [],
       info: {},
-      recipients: {}
+      recipients: {},
+      milestones: {}
     };
     bridge_client
       .service('information')
@@ -99,7 +100,7 @@ class BridgeMonitor extends Component {
       .find({
         query: {
           $limit: pageSize * 2,
-          $skip: (page) * (pageSize * 2),
+          $skip: page * (pageSize * 2),
           $sort: {
             earliestPayTime: -1
           }
@@ -131,12 +132,30 @@ class BridgeMonitor extends Component {
                   }
                 });
             }
+            var reference = element.event.returnValues.reference;
+            this.state.dapp_client
+              .service('milestones')
+              .find({
+                query: {
+                  txHash: reference
+                }
+              })
+              .then(result => {
+                let m = Object.assign({}, this.state.milestones);
+                if (result.data.length > 0) {
+                  let milestone = result.data[0];
+                  m[reference] = `${config.actualDappURL}campaigns/${
+                    milestone.campaignId
+                  }/milestones/${milestone._id}`;
+                  this.setState({ milestones: m });
+                }
+              });
           }
         });
         var p = this.state.payments.slice().concat(payments.data);
         this.setState({
           payments: p.filter((obj, pos, arr) => {
-            return arr.map(mapObj => mapObj["_id"]).indexOf(obj["_id"]) === pos;
+            return arr.map(mapObj => mapObj['_id']).indexOf(obj['_id']) === pos;
           })
         });
       });
@@ -149,10 +168,10 @@ class BridgeMonitor extends Component {
           <TabList>
             <Tab>Authorized Payments</Tab>
             <Tab>
-              {config.homeNetworkName + " -> " + config.foreignNetworkName}
+              {config.homeNetworkName + ' -> ' + config.foreignNetworkName}
             </Tab>
             <Tab>
-              {config.foreignNetworkName + " -> " + config.homeNetworkName}
+              {config.foreignNetworkName + ' -> ' + config.homeNetworkName}
             </Tab>
             <Tab> Info and Utilities </Tab>
           </TabList>
@@ -162,6 +181,7 @@ class BridgeMonitor extends Component {
               <PaymentsTable
                 fetchPayments={this.fetchPayments}
                 recipients={this.state.recipients}
+                milestones={this.state.milestones}
                 payments={this.state.payments}
                 lastCheckin={this.state.info.securityGuardLastCheckin}
               />

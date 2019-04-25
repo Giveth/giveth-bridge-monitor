@@ -120,6 +120,18 @@ class PaymentsTable extends Component {
             accessor: datum => datum.event.returnValues.reference,
             show: false,
           },
+          {
+            id: 'link',
+            Header: 'Link',
+            width: 80,
+            Cell: ({ row }) => {
+              if (this.props.milestones.hasOwnProperty(row.reference)) {
+                return (<a target="_blank" href={this.props.milestones[row.reference]}>Milestone</a>)
+              } else {
+                return "Unknown"
+              }
+            },
+          },
         ],
       },
     ];
@@ -183,25 +195,6 @@ class PaymentsTable extends Component {
                 desc: true,
               },
             ]}
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: async e => {
-                  try {
-                    const resp = await client.service('milestones').find({
-                      query: {
-                        txHash: rowInfo.row.reference,
-                      },
-                    });
-                    const milestone = resp.data[0]
-                    const url = `${config.actualDappURL}campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
-                    window.open(url, '_blank');
-                  } catch (e2) {
-                    console.error(e2);
-                  }
-                }
-
-              };
-            }}
           />
         </div>
       </div>
