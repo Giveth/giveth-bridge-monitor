@@ -134,20 +134,31 @@ class BridgeMonitor extends Component {
             }
             var reference = element.event.returnValues.reference;
             this.state.dapp_client
-              .service('milestones')
+              .service('donations')
               .find({
                 query: {
                   txHash: reference
                 }
               })
-              .then(result => {
-                let m = Object.assign({}, this.state.milestones);
-                if (result.data.length > 0) {
-                  let milestone = result.data[0];
-                  m[reference] = `${config.actualDappURL}campaigns/${
-                    milestone.campaignId
-                  }/milestones/${milestone._id}`;
-                  this.setState({ milestones: m });
+              .then(donation => {
+                if (donation.data && donation.data.length > 0) {
+                  this.state.dapp_client
+                    .service('milestones')
+                    .find({
+                      query: {
+                        _id: donation.data[0].ownerTypeId
+                      }
+                    })
+                    .then(result => {
+                      let m = Object.assign({}, this.state.milestones);
+                      if (result.data.length > 0) {
+                        let milestone = result.data[0];
+                        m[reference] = `${config.actualDappURL}campaigns/${
+                          milestone.campaignId
+                          }/milestones/${milestone._id}`;
+                        this.setState({ milestones: m });
+                      }
+                    });
                 }
               });
           }
