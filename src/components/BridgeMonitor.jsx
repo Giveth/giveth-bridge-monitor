@@ -141,7 +141,7 @@ class BridgeMonitor extends Component {
                 }
               })
               .then(donation => {
-                if (donation.data) {
+                if (donation.data && donation.data.length > 0) {
                   this.state.dapp_client
                     .service('milestones')
                     .find({
