@@ -161,7 +161,7 @@ class PaymentsTable extends Component {
               .join(', ')}]
           </span>
         </div>
-        <div className="event-name"><strong>Click on any row to show the related milestone.</strong><br></br>Please make sure you have enabled pop-ups on this site.</div>
+        <div className="event-name">Please make sure you have enabled pop-ups on this site.</div>
         <div className="flex_container">
           <ReactTable
             flexGrow={1}
