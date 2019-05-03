@@ -1,7 +1,44 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit; }
+
 body {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
   font-size: 14px;
+  margin-top: 0px;
+}
+
+img.logo {
+  vertical-align: -1px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+span.header-right-align{
+  padding-top: 1px;
+  padding-right: 4px;
+  float: right;
+}
+
+span.header-title-text{
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+span.button-pad{
+  padding-right: 4px;
+}
+
+div.header-box{
+  background-color: whitesmoke;
+  padding-top: 4px;
+  padding-bottom: 5px;
 }
 
 .flex_container{
