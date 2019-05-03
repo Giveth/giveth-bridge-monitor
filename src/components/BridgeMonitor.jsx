@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
+import Header from './Header';
 import EventTable from './EventTable';
 import PaymentsTable from './PaymentsTable';
 import Info from './Info';
@@ -8,6 +9,14 @@ import Info from './Info';
 import config from '../configuration';
 import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
+
+import Web3Provider from 'web3-react'
+import { Connectors } from 'web3-react'
+const { InjectedConnector } = Connectors
+
+const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] })
+
+const connectors = { MetaMask }
 
 class BridgeMonitor extends Component {
   constructor(props) {
@@ -175,6 +184,10 @@ class BridgeMonitor extends Component {
   render() {
     return (
       <div>
+      <Web3Provider
+      connectors={connectors}
+      libraryName={'ethers.js'|'web3.js'|null} >
+        <Header/>
         <Tabs forceRenderTabPanel={true}>
           <TabList>
             <Tab>Authorized Payments</Tab>
@@ -252,6 +265,7 @@ class BridgeMonitor extends Component {
             />
           </TabPanel>
         </Tabs>
+        </Web3Provider>
       </div>
     );
   }
