@@ -8,5 +8,20 @@ export default function Header() {
     context.setFirstValidConnector(['MetaMask'])
   }, [])
 
-  return <div><p>Giveth Bridge Dashboard <button onClick={() => context.setFirstValidConnector(['MetaMask'])}>Connect with metamask</button> {context.account} {networks[context.networkId-1]}</p></div>
+  return (
+    <div class="header-box">
+      <p>
+          <span class="header-title-text">
+            <img src="https://bowensanders.github.io/giveth-logo-black.png" class="logo" alt="" height="14" width="14" ></img>
+            Giveth Bridge Dashboard 
+          </span>
+          <span class="header-right-align">
+            <span class="button-pad">
+              <button onClick={() => context.setFirstValidConnector(['MetaMask'])}>Connect with metamask</button>
+            </span>
+            {context.account} {networks[context.networkId-1]}
+          </span>
+      </p>
+    </div>
+  );
 }
