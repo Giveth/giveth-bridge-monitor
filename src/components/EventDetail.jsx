@@ -47,7 +47,7 @@ class EventDetail extends Component{
         {this.props.data.event.event === 'Deposit' && (
           <DonationLink txHash = {this.props.data.event.transactionHash} type = {this.props.data.event.event} />
          )}
-        <span className = "event-name"><a target = "_blank" href = {etherscanLink}>Etherscan Link</a></span>
+        <span className = "event-name"><a target = "_blank" rel="noopener noreferrer" href = {etherscanLink}>Etherscan Link</a></span>
         <ReactTable
           data = {returnValuesData}
           columns = {returnValuesColumns}

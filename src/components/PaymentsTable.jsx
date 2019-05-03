@@ -32,6 +32,8 @@ class PaymentsTable extends Component {
       case 'Delayed':
         color = 'rgba(242, 210, 0, 0.5)';
         break;
+      default:
+        color = 'rgba(255, 255, 255, 1)';
     }
     return color;
   };

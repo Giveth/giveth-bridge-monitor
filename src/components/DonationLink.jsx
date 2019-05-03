@@ -61,7 +61,7 @@ class DonationLink extends Component {
     if (this.state.donationUrl !== '#') {
       return (
         <span className = "event-name">
-        <a target="_blank" href={this.state.donationUrl}>
+        <a target="_blank" rel="noopener noreferrer" href={this.state.donationUrl}>
           {this.state.donationType}Donation Link
         </a></span>
       );
