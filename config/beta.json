@@ -7,8 +7,8 @@
   "pollTime": 300000,
   "homeStartBlock" :  5875760,
   "foreignStartBlock": 2548160,
-  "homeNodeURL": "https://mew.giveth.io",
-  "foreignNodeURL": "https://rinkeby.giveth.io",
+  "homeNodeURL": "wss://mainnet.eth.aragon.network/ws",
+  "foreignNodeURL": "wss://rinkeby.giveth.io/ws",
   "homeContractAddress" : "0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7",
   "foreignContractAddress" : "0xfF9CD5140e79377feB23f6DFaF1f8b558C0FE621"
 }

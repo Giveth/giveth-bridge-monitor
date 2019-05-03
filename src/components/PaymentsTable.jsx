@@ -10,6 +10,12 @@ client.configure(feathers.socketio(io(config.feathersDappConnection)));
 
 
 class PaymentsTable extends Component {
+  
+  componentDidMount() {
+    this.page = 0;
+    this.pageSize = 10;
+  }
+
   getRowColor = row => {
     let color;
     const status = this.getStatus(row.original);
@@ -94,7 +100,11 @@ class PaymentsTable extends Component {
           {
             id: 'recipient',
             Header: 'Recipient',
-            accessor: datum => datum.event.returnValues.recipient,
+            Cell: ({ row }) => {
+              return (<a target="_blank" rel="noopener noreferrer" href={(`${config.actualDappURL}profile/${row._original.event.returnValues.recipient}`)}>
+                {(this.props.recipients.hasOwnProperty(row._original.event.returnValues.recipient) ? this.props.recipients[row._original.event.returnValues.recipient] : "Unknown") + " - " + row._original.event.returnValues.recipient}
+              </a>)
+            },
           },
           {
             id: 'amount',
@@ -109,10 +119,16 @@ class PaymentsTable extends Component {
             width: 60,
           },
           {
-            id: 'reference',
-            Header: 'Reference',
-            accessor: datum => datum.event.returnValues.reference,
-            show: false,
+            id: 'link',
+            Header: 'Link',
+            width: 80,
+            Cell: ({ row }) => {
+              if (this.props.milestones.hasOwnProperty(row._original.event.returnValues.reference)) {
+                return (<a target="_blank" rel="noopener noreferrer" href={this.props.milestones[row._original.event.returnValues.reference]}>Milestone</a>)
+              } else {
+                return "Unknown"
+              }
+            },
           },
         ],
       },
@@ -145,16 +161,29 @@ class PaymentsTable extends Component {
               .join(', ')}]
           </span>
         </div>
-        <div className="event-name"><strong>Click on any row to show the related milestone.</strong><br></br>Please make sure you have enabled pop-ups on this site.</div>
+        <div className="event-name">Please make sure you have enabled pop-ups on this site.</div>
         <div className="flex_container">
           <ReactTable
             flexGrow={1}
             data={this.props.payments}
             columns={columns}
-            showPagination={false}
+            showPagination={true}
+            showPaginationBottom={true}
+            defaultPageSize={10}
+            onPageChange={page => {
+              if(page > this.page){
+                this.props.fetchPayments(page, this.pageSize);
+              }
+              this.page = page;
+            }}
+            onPageSizeChange={pageSize => {
+              if(pageSize > this.pageSize){
+                this.props.fetchPayments(this.page, pageSize);
+              }
+              this.pageSize = pageSize;
+            }}
             sortable={true}
             filterable={true}
-            pageSize={this.props.payments.length}
             getTrProps={this.getTrProps}
             collapseOnDataChange={false}
             defaultSorted={[
@@ -163,25 +192,6 @@ class PaymentsTable extends Component {
                 desc: true,
               },
             ]}
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: async e => {
-                  try {
-                    const resp = await client.service('milestones').find({
-                      query: {
-                        txHash: rowInfo.row.reference,
-                      },
-                    });
-                    const milestone = resp.data[0]
-                    const url = `${config.actualDappURL}campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
-                    window.open(url, '_blank');
-                  } catch (e2) {
-                    console.error(e2);
-                  }
-                }
-
-              };
-            }}
           />
         </div>
       </div>

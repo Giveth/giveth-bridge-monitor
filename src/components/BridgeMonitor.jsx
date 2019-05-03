@@ -13,25 +13,45 @@ class BridgeMonitor extends Component {
   constructor(props) {
     super(props);
 
-    const socket = io(config.feathersConnection);
-    const client = feathers();
-    client.configure(
-      feathers.socketio(socket, { timeout: 30000, pingTimeout: 30000, upgradeTimeout: 30000 }),
+    // Bridge feathers
+    const bridge_socket = io(config.feathersConnection);
+    const bridge_client = feathers();
+    bridge_client.configure(
+      feathers.socketio(bridge_socket, {
+        timeout: 30000,
+        pingTimeout: 30000,
+        upgradeTimeout: 30000
+      })
     );
+
+    // Dapp feathers
+    const dapp_socket = io(config.feathersDappConnection);
+    const dapp_client = feathers();
+    dapp_client.configure(
+      feathers.socketio(dapp_socket, {
+        timeout: 30000,
+        pingTimeout: 30000,
+        upgradeTimeout: 30000
+      })
+    );
+
     this.state = {
-      client,
+      bridge_client,
+      dapp_client,
       donations: [],
       deposits: [],
       withdrawals: [],
       payments: [],
       info: {},
+      recipients: {},
+      milestones: {}
     };
-    client
+    bridge_client
       .service('information')
       .find()
       .then(info => {
         this.setState({
-          info,
+          info
         });
       });
 
@@ -39,14 +59,14 @@ class BridgeMonitor extends Component {
   }
 
   loadEvents = async () => {
-    const client = this.state.client;
+    const client = this.state.bridge_client;
 
     client
       .service('donations')
       .find()
       .then(donations => {
         this.setState({
-          donations: donations.data,
+          donations: donations.data
         });
       });
 
@@ -55,7 +75,7 @@ class BridgeMonitor extends Component {
       .find()
       .then(deposits => {
         this.setState({
-          deposits: deposits.data,
+          deposits: deposits.data
         });
       });
 
@@ -64,19 +84,92 @@ class BridgeMonitor extends Component {
       .find()
       .then(withdrawals => {
         this.setState({
-          withdrawals: withdrawals.data,
+          withdrawals: withdrawals.data
         });
       });
 
+    this.fetchPayments(0, 10);
+
+    setTimeout(this.loadEvents, 1000 * 60 * 5);
+  };
+
+  fetchPayments = async (page, pageSize) => {
+    const client = this.state.bridge_client;
     client
       .service('payments')
-      .find()
+      .find({
+        query: {
+          $limit: pageSize * 2,
+          $skip: page * (pageSize * 2),
+          $sort: {
+            earliestPayTime: -1
+          }
+        }
+      })
       .then(payments => {
+        var data = payments.data;
+        var recipients = [];
+        data.forEach(element => {
+          if (element.event.returnValues) {
+            var recipient = element.event.returnValues.recipient;
+            if (
+              !recipients.includes(recipient) &&
+              !this.state.recipients.hasOwnProperty(recipient)
+            ) {
+              recipients.push(recipient);
+              this.state.dapp_client
+                .service('users')
+                .find({
+                  query: {
+                    address: recipient
+                  }
+                })
+                .then(result => {
+                  let r = Object.assign({}, this.state.recipients);
+                  if (result.data.length > 0 && result.data[0].name) {
+                    r[recipient] = result.data[0].name;
+                    this.setState({ recipients: r });
+                  }
+                });
+            }
+            var reference = element.event.returnValues.reference;
+            this.state.dapp_client
+              .service('donations')
+              .find({
+                query: {
+                  txHash: reference
+                }
+              })
+              .then(donation => {
+                if (donation.data && donation.data.length > 0) {
+                  this.state.dapp_client
+                    .service('milestones')
+                    .find({
+                      query: {
+                        _id: donation.data[0].ownerTypeId
+                      }
+                    })
+                    .then(result => {
+                      let m = Object.assign({}, this.state.milestones);
+                      if (result.data.length > 0) {
+                        let milestone = result.data[0];
+                        m[reference] = `${config.actualDappURL}campaigns/${
+                          milestone.campaignId
+                          }/milestones/${milestone._id}`;
+                        this.setState({ milestones: m });
+                      }
+                    });
+                }
+              });
+          }
+        });
+        var p = this.state.payments.slice().concat(payments.data);
         this.setState({
-          payments: payments.data,
+          payments: p.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj['_id']).indexOf(obj['_id']) === pos;
+          })
         });
       });
-    setTimeout(this.loadEvents, 5000);
   };
 
   render() {
@@ -85,14 +178,21 @@ class BridgeMonitor extends Component {
         <Tabs forceRenderTabPanel={true}>
           <TabList>
             <Tab>Authorized Payments</Tab>
-            <Tab>{config.homeNetworkName + " -> " + config.foreignNetworkName}</Tab>
-            <Tab>{config.foreignNetworkName + " -> " + config.homeNetworkName}</Tab>
+            <Tab>
+              {config.homeNetworkName + ' -> ' + config.foreignNetworkName}
+            </Tab>
+            <Tab>
+              {config.foreignNetworkName + ' -> ' + config.homeNetworkName}
+            </Tab>
             <Tab> Info and Utilities </Tab>
           </TabList>
 
           <TabPanel>
             <div>
               <PaymentsTable
+                fetchPayments={this.fetchPayments}
+                recipients={this.state.recipients}
+                milestones={this.state.milestones}
                 payments={this.state.payments}
                 lastCheckin={this.state.info.securityGuardLastCheckin}
               />
@@ -101,7 +201,7 @@ class BridgeMonitor extends Component {
 
           <TabPanel>
             <div className="flex_container">
-            <div className="column">
+              <div className="column">
                 <EventTable
                   events={this.state.donations}
                   header={config.homeNetworkName + " Deposits"}
@@ -109,8 +209,8 @@ class BridgeMonitor extends Component {
                   duplicateTable={true}
                   etherscanURL={config.homeEtherscanURL}
                 />
-            </div>
-            <div className="column">
+              </div>
+              <div className="column">
                 <EventTable
                   events={this.state.deposits}
                   header={config.foreignNetworkName + " Deposits"}
@@ -119,8 +219,6 @@ class BridgeMonitor extends Component {
                   etherscanURL={config.foreignEtherscanURL}
                 />
               </div>
-              
-              
             </div>
           </TabPanel>
 
@@ -134,7 +232,7 @@ class BridgeMonitor extends Component {
                   duplicateTable={true}
                   etherscanURL={config.foreignEtherscanURL}
                 />
-              </div> 
+              </div>
               <div className="column">
                 <EventTable
                   events={this.state.payments}
@@ -146,9 +244,12 @@ class BridgeMonitor extends Component {
               </div>
             </div>
           </TabPanel>
-          
+
           <TabPanel>
-            <Info client={this.state.client} contracts={this.state.info} />
+            <Info
+              client={this.state.bridge_client}
+              contracts={this.state.info}
+            />
           </TabPanel>
         </Tabs>
       </div>
