@@ -19,7 +19,7 @@ export default function Header() {
           </span>
           <span class="header-right-align">
             <span class="button-pad">
-              <Web3Button show={!context.account} onClick={() => context.setFirstValidConnector(['MetaMask'])} text="Connect with metamask" />
+              <Web3Button show={() => !context.account} onClick={() => context.setFirstValidConnector(['MetaMask'])} text="Connect with metamask" />
             </span>
             {context.account} {networks[context.networkId-1]}
           </span>
