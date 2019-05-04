@@ -5,6 +5,8 @@ import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
 import config from '../configuration';
 
+import Web3Button from './Web3Button';
+
 const client = feathers();
 client.configure(feathers.socketio(io(config.feathersDappConnection)));
 
@@ -153,6 +155,12 @@ class PaymentsTable extends Component {
           {securityGuardNeedsToCheckin() && (
             <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
+          <Web3Button show={(context) => config.whitelist.includes(context.account)} onClick={(context) => {
+            let contract = config.getContract(context);
+            if (contract) {
+              contract.methods.checkIn().send({from: context.account})
+            }
+          }} text="Check In" />
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
           </span>
