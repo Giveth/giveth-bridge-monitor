@@ -51,7 +51,7 @@ const config = Object.assign({}, configurations[REACT_APP_ENVIRONMENT]);
 
 config.feathersConnection = REACT_APP_FEATHERJS_CONNECTION_URL || config.feathersConnection;
 
-config.whitelist = ['0xdaa172456f5815256831aee19c8a370a83522871'];
+config.whitelist = ['0xDAa172456F5815256831aeE19C8A370a83522871'];
 
 config.getContract = (context) => {
   if(context.library){
