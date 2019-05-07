@@ -6,6 +6,7 @@ import io from 'socket.io-client';
 import config from '../configuration';
 
 import Web3Button from './Web3Button';
+import DelayModal from './DelayModal';
 
 const client = feathers();
 client.configure(feathers.socketio(io(config.feathersDappConnection)));
@@ -13,6 +14,13 @@ client.configure(feathers.socketio(io(config.feathersDappConnection)));
 
 class PaymentsTable extends Component {
   
+  constructor(props) {
+    super(props);
+    this.state = {
+      delayId: -1
+    };
+  }
+
   componentDidMount() {
     this.page = 0;
     this.pageSize = 10;
@@ -139,12 +147,13 @@ class PaymentsTable extends Component {
             Header: 'Actions',
             width: 100,
             Cell: ({ row }) => {
-              return (<Web3Button show={(context) => config.whitelist.includes(context.account) && row.status === 'Approved'} onClick={(context) => {
+              return (<div><Web3Button show={(context) => config.whitelist.includes(context.account) && row.status === 'Approved'} onClick={(context) => {
                 let contract = config.getContract(context);
                 if (contract) {
                   contract.methods.disburseAuthorizedPayment(row.ids).send({from: context.account})
                 }
-              }} text="Pay" />)
+              }} text="Pay" />
+              <Web3Button show={(context) => config.whitelist.includes(context.account) && row.status !== 'Paid'} onClick={() => {this.setState({delayId: row.ids})}} text="Delay" /></div>)
             },
           },
         ],
@@ -164,6 +173,7 @@ class PaymentsTable extends Component {
 
     return (
       <div className="authorized-payments">
+      <DelayModal handleClose={() => this.setState({delayId: -1})} delayId={this.state.delayId} />
         <div className="event-subcontainer">
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
