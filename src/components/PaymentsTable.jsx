@@ -147,7 +147,7 @@ class PaymentsTable extends Component {
             Header: 'Actions',
             width: 100,
             Cell: ({ row }) => {
-              return (<div><Web3Button show={(context) => config.whitelist.includes(context.account) && row.status === 'Approved'} onClick={(context) => {
+              return (<div><Web3Button show={(context) => (config.whitelist.includes(context.account) || row._original.event.returnValues.recipient === context.account) && row.status === 'Approved'} onClick={(context) => {
                 let contract = config.getContract(context);
                 if (contract) {
                   contract.methods.disburseAuthorizedPayment(row.ids).send({from: context.account})
