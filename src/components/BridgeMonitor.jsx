@@ -10,14 +10,6 @@ import config from '../configuration';
 import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
 
-import Web3Provider from 'web3-react'
-import { Connectors } from 'web3-react'
-const { InjectedConnector } = Connectors
-
-const MetaMask = new InjectedConnector({ supportedNetworks: [1, 4] })
-
-const connectors = { MetaMask }
-
 class BridgeMonitor extends Component {
   constructor(props) {
     super(props);
@@ -184,9 +176,6 @@ class BridgeMonitor extends Component {
   render() {
     return (
       <div>
-      <Web3Provider
-      connectors={connectors}
-      libraryName={'ethers.js'|'web3.js'|null} >
         <Header/>
         <Tabs forceRenderTabPanel={true}>
           <TabList>
@@ -240,7 +229,7 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.withdrawals}
-                  header={config.foreignNetworkName + " Withdrawls"}
+                  header={config.foreignNetworkName + " Withdrawals"}
                   duplicateMessage="This withdrawal event has multiple payments that reference it as their home transaction!"
                   duplicateTable={true}
                   etherscanURL={config.foreignEtherscanURL}
@@ -249,7 +238,7 @@ class BridgeMonitor extends Component {
               <div className="column">
                 <EventTable
                   events={this.state.payments}
-                  header={config.homeNetworkName + " Withdrawls"}
+                  header={config.homeNetworkName + " Withdrawals"}
                   duplicateMessage="The home transaction of this payment has other payments that also reference it!"
                   duplicateTable={false}
                   etherscanURL={config.homeEtherscanURL}
@@ -265,7 +254,6 @@ class BridgeMonitor extends Component {
             />
           </TabPanel>
         </Tabs>
-        </Web3Provider>
       </div>
     );
   }

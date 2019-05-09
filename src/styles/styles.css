@@ -7,6 +7,35 @@
 *::after {
   box-sizing: inherit; }
 
+
+
+.btn {
+  background-image: linear-gradient(to right bottom, #6666ff, #222222);
+  border-radius: 4px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  margin: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 1px;
+  padding-bottom: 2px;
+  width: fit-content;
+  transition: all .2s; }
+  .btn:hover, .btn-small:hover {
+    transform: scale(1.05); }
+  .btn:focus, .btn-small:focus {
+    outline: none; }
+  .btn > *:first-child, .btn-small > *:first-child {
+    margin-right: 1rem; }
+
+
+  
+
+
 body {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
