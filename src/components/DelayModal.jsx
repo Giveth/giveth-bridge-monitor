@@ -36,6 +36,7 @@ class DelayModal extends React.Component {
                 isOpen={this.props.delayId !== -1}
                 contentLabel="Delay"
                 style={style}>
+                <div>Please enter the delay in seconds.</div>
                 <input type="number" onInput={this.handleChange.bind(this)} value={this.state.seconds} />
                 <Web3Button onClick={(context) => {
                     let contract = config.getContract(context);

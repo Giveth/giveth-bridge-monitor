@@ -34,10 +34,10 @@ class PaymentsTable extends Component {
         color = 'rgba(176, 0, 0, 0.5)';
         break;
       case 'Paid':
-        color = 'rgba(85, 176, 0, 0.5)';
+        color = 'rgba(0, 100, 0, .35)';
         break;
       case 'Approved':
-        color = 'rgba(85, 176, 0, 0.25)';
+        color = 'rgba(85, 176, 0, 0.5)';
         break;
       case 'Delayed':
         color = 'rgba(242, 210, 0, 0.5)';
@@ -188,18 +188,19 @@ class PaymentsTable extends Component {
               contract.methods.checkIn().send({from: context.account})
             }
           }} text="Check In" />
-          <Web3Button show={(context) => config.whitelist.includes(context.account) && pendingPayments.length > 0} onClick={(context) => {
-            let contract = config.getContract(context);
-            if (contract) {
-              contract.methods.disburseAuthorizedPayments(pendingPayments).send({from: context.account})
-            }
-          }} text="Disburse All Payments" />
+          
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
           </span>
           <span className="event-name">
             [{pendingPayments.toString()}]
           </span>
+          <Web3Button show={(context) => config.whitelist.includes(context.account) && pendingPayments.length > 0} onClick={(context) => {
+            let contract = config.getContract(context);
+            if (contract) {
+              contract.methods.disburseAuthorizedPayments(pendingPayments).send({from: context.account})
+            }
+          }} text="Disburse All Payments" />
         </div>
         <div className="event-name">Please make sure you have enabled pop-ups on this site.</div>
         <div className="flex_container">
