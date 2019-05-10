@@ -1,6 +1,8 @@
 import React, { useEffect }  from 'react'
 import { useWeb3Context } from 'web3-react'
 
+import Web3Button from './Web3Button';
+
 export default function Header() {
   const networks = ["Mainnet", "Ropsten", "Kovan", "Rinkeby"]
   const context = useWeb3Context()
@@ -9,16 +11,16 @@ export default function Header() {
   }, [])
 
   return (
-    <div class="header-box">
+    <div className="header-box">
       <p>
-          <span class="header-title-text">
-            <img src="https://bowensanders.github.io/giveth-logo-black.png" class="logo" alt="" height="14" width="14" ></img>
+          <span className="header-title-text">
+            <img src="https://bowensanders.github.io/giveth-logo-black.png" className="logo" alt="" height="14" width="14" ></img>
             Giveth Bridge Dashboard 
           </span>
-          <span class="header-right-align">
-            <span class="button-pad">
-              <button onClick={() => context.setFirstValidConnector(['MetaMask'])}>Connect with metamask</button>
-            </span>
+          <span className="header-right-align">
+            
+              <Web3Button show={() => !context.account} onClick={() => context.setFirstValidConnector(['MetaMask'])} text="Connect with metamask" />
+            
             {context.account} {networks[context.networkId-1]}
           </span>
       </p>
