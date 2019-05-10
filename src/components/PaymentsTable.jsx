@@ -5,12 +5,22 @@ import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
 import config from '../configuration';
 
+import Web3Button from './Web3Button';
+import DelayModal from './DelayModal';
+
 const client = feathers();
 client.configure(feathers.socketio(io(config.feathersDappConnection)));
 
 
 class PaymentsTable extends Component {
   
+  constructor(props) {
+    super(props);
+    this.state = {
+      delayId: -1
+    };
+  }
+
   componentDidMount() {
     this.page = 0;
     this.pageSize = 10;
@@ -24,10 +34,10 @@ class PaymentsTable extends Component {
         color = 'rgba(176, 0, 0, 0.5)';
         break;
       case 'Paid':
-        color = 'rgba(85, 176, 0, 0.5)';
+        color = 'rgba(0, 100, 0, .35)';
         break;
       case 'Approved':
-        color = 'rgba(85, 176, 0, 0.25)';
+        color = 'rgba(85, 176, 0, 0.5)';
         break;
       case 'Delayed':
         color = 'rgba(242, 210, 0, 0.5)';
@@ -132,6 +142,20 @@ class PaymentsTable extends Component {
               }
             },
           },
+          {
+            id: 'actions',
+            Header: 'Actions',
+            width: 100,
+            Cell: ({ row }) => {
+              return (<div><Web3Button show={(context) => (config.whitelist.includes(context.account) || row._original.event.returnValues.recipient === context.account) && row.status === 'Approved'} onClick={(context) => {
+                let contract = config.getContract(context);
+                if (contract) {
+                  contract.methods.disburseAuthorizedPayment(row.ids).send({from: context.account})
+                }
+              }} text="Pay" />
+              <Web3Button show={(context) => config.whitelist.includes(context.account) && row.status !== 'Paid'} onClick={() => {this.setState({delayId: row.ids})}} text="Delay" /></div>)
+            },
+          },
         ],
       },
     ];
@@ -143,8 +167,13 @@ class PaymentsTable extends Component {
       );
     };
 
+    const pendingPayments = this.props.payments
+      .filter(p => this.getStatus(p) === 'Approved')
+      .map(p => p.event.returnValues.idPayment);
+
     return (
       <div className="authorized-payments">
+      <DelayModal handleClose={() => this.setState({delayId: -1})} delayId={this.state.delayId} />
         <div className="event-subcontainer">
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
@@ -153,15 +182,25 @@ class PaymentsTable extends Component {
           {securityGuardNeedsToCheckin() && (
             <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
+          <Web3Button show={(context) => config.whitelist.includes(context.account)} onClick={(context) => {
+            let contract = config.getContract(context);
+            if (contract) {
+              contract.methods.checkIn().send({from: context.account})
+            }
+          }} text="Check In" />
+          
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
           </span>
           <span className="event-name">
-            [{this.props.payments
-              .filter(p => this.getStatus(p) === 'Approved')
-              .map(p => p.event.returnValues.idPayment)
-              .join(', ')}]
+            [{pendingPayments.toString()}]
           </span>
+          <Web3Button show={(context) => config.whitelist.includes(context.account) && pendingPayments.length > 0} onClick={(context) => {
+            let contract = config.getContract(context);
+            if (contract) {
+              contract.methods.disburseAuthorizedPayments(pendingPayments).send({from: context.account})
+            }
+          }} text="Disburse All Payments" />
         </div>
         <div className="event-name">Please make sure you have enabled pop-ups on this site.</div>
         <div className="flex_container">
