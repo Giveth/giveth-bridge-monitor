@@ -167,9 +167,9 @@ class PaymentsTable extends Component {
       );
     };
 
-    const pendingPayments = this.props.payments
+    const pendingPayments = [this.props.payments
       .filter(p => this.getStatus(p) === 'Approved')
-      .map(p => p.event.returnValues.idPayment);
+      .map(p => p.event.returnValues.idPayment)];
 
     return (
       <div className="authorized-payments">
