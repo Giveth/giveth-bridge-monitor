@@ -9,9 +9,7 @@
   flex-direction: row;
   justify-content: center;
   margin: 1em;
-  border: 0px;
-  background-color: whitesmoke;
-  font-weight: bold;
+  border: 1px solid black;
 }
 /* .react-tabs__tab {
   display: inline-block;
