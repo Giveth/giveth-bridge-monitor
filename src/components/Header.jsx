@@ -18,9 +18,7 @@ export default function Header() {
             Giveth Bridge Dashboard 
           </span>
           <span className="header-right-align">
-            
-              <Web3Button show={() => !context.account} onClick={() => context.setFirstValidConnector(['MetaMask'])} text="Connect with metamask" />
-            
+            <Web3Button show={() => !context.account} onClick={() => context.setFirstValidConnector(['MetaMask'])} text="Connect with metamask" />
             {context.account} {networks[context.networkId-1]}
           </span>
       </p>
