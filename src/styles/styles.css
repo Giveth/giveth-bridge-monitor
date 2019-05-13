@@ -133,7 +133,7 @@ outline: 0;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  border: 0px;
+  border-bottom: 1px solid #aaa;
   background-color: whitesmoke;
   font-weight: bold;
 }
