@@ -21,17 +21,16 @@
   list-style: none;
   padding: 6px 12px;
   cursor: pointer;
-} 
+} */
 .react-tabs__tab {
-  display: inline-block;
-  border: 2px solid grey;
+  /* display: inline-block; */
+  /* border: 2px solid grey; */
   list-style: none;
   padding: 0.7em;
   width: 30%;
   cursor: pointer;
   text-align: center;
 }
-*/
 
 .react-tabs__tab--selected {
   background: #fff;
@@ -46,6 +45,7 @@
 }
 
 .react-tabs__tab-panel {
+  background-color: white;
   display: none;
 }
 
