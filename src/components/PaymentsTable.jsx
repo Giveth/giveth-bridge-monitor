@@ -145,7 +145,7 @@ class PaymentsTable extends Component {
           {
             id: 'actions',
             Header: 'Actions',
-            width: 100,
+            width: 110,
             Cell: ({ row }) => {
               return (<div><Web3Button show={(context) => (config.whitelist.includes(context.account) || row._original.event.returnValues.recipient === context.account) && row.status === 'Approved'} onClick={(context) => {
                 let contract = config.getContract(context);
