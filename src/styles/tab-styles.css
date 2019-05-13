@@ -6,6 +6,10 @@
   text-align: center;
 }
 
+.react-tabs__tab--selected {
+  background: #fff;
+}
+
 .react-tabs__tab:focus {
   outline: none;
 }
