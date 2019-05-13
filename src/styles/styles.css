@@ -18,6 +18,7 @@
   display: flex;
   align-self: center;
   align-items: center;
+  float: left;
   margin: 2px;
   padding-left: 4px;
   padding-right: 4px;
@@ -100,8 +101,13 @@ div.header-box{
   margin: 1em;
 }
 a {
-  color: black;
-  font-weight: bold;
+  color: rebeccapurple;
+  font-weight: normal;
+  text-decoration: none;
+}
+a:hover {
+  color: darkorchid;
+  text-decoration: underline;
 }
 /* .ReactTable .rt-thead .rt-resizable-header{
   overflow: hidden;
@@ -120,3 +126,25 @@ outline: 0;
   color: #000;
 };
 
+.react-tabs {
+  background-color: whitesmoke;
+}
+.react-tabs__tab-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1em;
+  border: 0px;
+  background-color: whitesmoke;
+  font-weight: bold;
+}
+.react-tabs__tab {
+  /* display: inline-block; */
+  /* border: 2px solid grey; */
+  list-style: none;
+  padding: 0.7em;
+  width: 20%;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+}
