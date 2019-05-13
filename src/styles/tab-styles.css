@@ -25,7 +25,7 @@
 } */
 .react-tabs__tab {
   /* display: inline-block; */
-  border: 2px solid grey;
+  /* border: 2px solid grey; */
   list-style: none;
   padding: 0.7em;
   width: 30%;
@@ -35,8 +35,8 @@
 
 .react-tabs__tab--selected {
   background: #fff;
-  border-color: orange;
-  color: black;
+/*  border-color: orange;
+  color: black; */
 }
 
 .react-tabs__tab:focus {
