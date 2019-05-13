@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import BridgeMonitor from './components/BridgeMonitor';
 
+import 'react-tabs/style/react-tabs.css';
 import './styles/styles.css';
 import 'react-table/react-table.css';
-import 'react-tabs/style/react-tabs.css';
 
 import Web3 from 'web3';
 
