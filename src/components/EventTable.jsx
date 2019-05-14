@@ -5,6 +5,11 @@ import Web3 from 'web3';
 
 class EventTable extends Component {
 
+  componentDidMount() {
+    this.page = 0;
+    this.pageSize = 10;
+  }
+
   getRowColor = (row) => {
     let color;
     if (!row.original.matched) {
@@ -82,10 +87,8 @@ class EventTable extends Component {
       <ReactTable
         data = {this.props.events}
         columns = {columns}
-        showPagination = {false}
         sortable = {true}
         filterable = {true}
-        pageSize = {this.props.events.length}
         getTrProps = {this.getTrProps}
         collapseOnDataChange = {false}
         defaultSorted = {[
@@ -94,6 +97,21 @@ class EventTable extends Component {
             desc: true
           }
         ]}
+        showPagination={true}
+        showPaginationBottom={true}
+        defaultPageSize={10}
+        onPageChange={page => {
+          if (page > this.page) {
+            this.props.fetch(page, this.pageSize);
+          }
+          this.page = page;
+        }}
+        onPageSizeChange={pageSize => {
+          if (pageSize > this.pageSize) {
+            this.props.fetch(this.page, pageSize);
+          }
+          this.pageSize = pageSize;
+        }}
         SubComponent = {row => (
           <EventDetail
             data = {row.original}
