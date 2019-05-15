@@ -22,37 +22,44 @@ class DonationLink extends Component {
       })
       .then(donationResp => {
         const dataArrayNum = donationResp.data.length - 1;
-        if (donationResp.data[dataArrayNum].ownerType === "milestone") {
-          client
-            .service("milestones")
-            .find({
-              query: {
-                _id: donationResp.data[dataArrayNum].ownerTypeId
-              }
-            })
-            .then(milestoneResp => {
-              const milestone = milestoneResp.data[0];
-              this.setState({
-                donationType: 'Milestone ',
-                donationUrl: `${config.actualDappURL}campaigns/${
-                  milestone.campaignId
-                }/milestones/${milestone._id}`
+        if (dataArrayNum >= 0) {
+          if (donationResp.data[dataArrayNum].ownerType === "milestone") {
+            client
+              .service("milestones")
+              .find({
+                query: {
+                  _id: donationResp.data[dataArrayNum].ownerTypeId
+                }
+              })
+              .then(milestoneResp => {
+                const milestone = milestoneResp.data[0];
+                this.setState({
+                  donationType: 'Milestone ',
+                  donationUrl: `${config.actualDappURL}campaigns/${
+                    milestone.campaignId
+                    }/milestones/${milestone._id}`
+                });
               });
+          } else if (donationResp.data[dataArrayNum].ownerType === "campaign") {
+            this.setState({
+              donationType: 'Campaign ',
+              donationUrl: `${config.actualDappURL}campaigns/${
+                donationResp.data[dataArrayNum].ownerTypeId
+                }`
+            }, () => { });
+          } else if (donationResp.data[dataArrayNum].delegateType === "dac") {
+            this.setState({
+              donationType: 'DAC ',
+              donationUrl: `${config.actualDappURL}dacs/${
+                donationResp.data[dataArrayNum].delegateTypeId
+                }`
             });
-        } else if (donationResp.data[dataArrayNum].ownerType === "campaign") {
-          this.setState({
-            donationType: 'Campaign ',
-            donationUrl: `${config.actualDappURL}campaigns/${
-              donationResp.data[dataArrayNum].ownerTypeId
-            }`
-          },()=>{
-
-          });
-        } else {
-          this.setState({
-            donationType: 'Incomplete ',
-            donationUrl: `${config.feathersDappConnection}donations/?$sort%5BupdatedAt%5D=-1&txHash=${props.txHash}`
-          });
+          } else {
+            this.setState({
+              donationType: 'Incomplete ',
+              donationUrl: `${config.feathersDappConnection}donations/?$sort%5BupdatedAt%5D=-1&txHash=${props.txHash}`
+            });
+          }
         }
       });
   }
