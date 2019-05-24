@@ -162,14 +162,14 @@ class PaymentsTable extends Component {
 
     const securityGuardNeedsToCheckin = () => {
       return (
-        new Date(this.props.lastCheckin) < Date.now() - 1000 * 60 * 60 * 48 && // 48 hrs ago
+        new Date(this.props.lastCheckin) < Date.now() - 1000 * 60 * 60 * 25 && // 25 hrs ago
         this.props.payments.some(p => this.getStatus(p) === 'Approved')
       );
     };
 
-    const pendingPayments = this.props.payments
+    const pendingPayments = [this.props.payments
       .filter(p => this.getStatus(p) === 'Approved')
-      .map(p => p.event.returnValues.idPayment);
+      .map(p => p.event.returnValues.idPayment)];
 
     return (
       <div className="authorized-payments">
