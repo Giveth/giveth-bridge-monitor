@@ -60,38 +60,85 @@ class BridgeMonitor extends Component {
   }
 
   loadEvents = async () => {
-    const client = this.state.bridge_client;
+    this.fetchDonations(0, 10);
 
-    client
-      .service('donations')
-      .find()
-      .then(donations => {
-        this.setState({
-          donations: donations.data
-        });
-      });
+    this.fetchDeposits(0, 10);
 
-    client
-      .service('deposits')
-      .find()
-      .then(deposits => {
-        this.setState({
-          deposits: deposits.data
-        });
-      });
-
-    client
-      .service('withdrawals')
-      .find()
-      .then(withdrawals => {
-        this.setState({
-          withdrawals: withdrawals.data
-        });
-      });
+    this.fetchWithdrawals(0, 10);
 
     this.fetchPayments(0, 10);
 
     setTimeout(this.loadEvents, 1000 * 60 * 5);
+  };
+
+  fetchDonations = async (page, pageSize) => {
+    const client = this.state.bridge_client;
+    client
+      .service('donations')
+      .find({
+        query: {
+          $limit: pageSize * 2,
+          $skip: page * (pageSize * 2),
+          $sort: {
+            'event.blockNumber': -1
+          }
+        }
+      })
+      .then(donations => {
+        var d = this.state.donations.slice().concat(donations.data);
+        this.setState({
+          donations: d.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj['_id']).indexOf(obj['_id']) === pos;
+          })
+        });
+      });
+  };
+
+  fetchDeposits = async (page, pageSize) => {
+    const client = this.state.bridge_client;
+    client
+      .service('deposits')
+      .find({
+        query: {
+          $limit: pageSize * 2,
+          $skip: page * (pageSize * 2),
+          $sort: {
+            'event.blockNumber': -1
+          }
+        }
+      })
+      .then(deposits => {
+        var d = this.state.deposits.slice().concat(deposits.data);
+        this.setState({
+          deposits: d.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj['_id']).indexOf(obj['_id']) === pos;
+          })
+        });
+      });
+  };
+
+  fetchWithdrawals = async (page, pageSize) => {
+    const client = this.state.bridge_client;
+    client
+      .service('withdrawals')
+      .find({
+        query: {
+          $limit: pageSize * 2,
+          $skip: page * (pageSize * 2),
+          $sort: {
+            'event.blockNumber': -1
+          }
+        }
+      })
+      .then(withdrawals => {
+        var w = this.state.withdrawals.slice().concat(withdrawals.data);
+        this.setState({
+          withdrawals: w.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj['_id']).indexOf(obj['_id']) === pos;
+          })
+        });
+      });
+
   };
 
   fetchPayments = async (page, pageSize) => {
@@ -205,6 +252,7 @@ class BridgeMonitor extends Component {
             <div className="flex_container">
               <div className="column">
                 <EventTable
+                  fetch={this.fetchDonations}
                   events={this.state.donations}
                   header={config.homeNetworkName + " Deposits"}
                   duplicateMessage="This donation event has multiple deposits that reference it as their home transaction!"
@@ -214,6 +262,7 @@ class BridgeMonitor extends Component {
               </div>
               <div className="column">
                 <EventTable
+                  fetch={this.fetchDeposits}
                   events={this.state.deposits}
                   header={config.foreignNetworkName + " Deposits"}
                   duplicateMessage="The home transaction of this deposit has other deposits that also reference it!"
@@ -228,6 +277,7 @@ class BridgeMonitor extends Component {
             <div className="flex_container">
               <div className="column">
                 <EventTable
+                  fetch={this.fetchWithdrawals}
                   events={this.state.withdrawals}
                   header={config.foreignNetworkName + " Withdrawals"}
                   duplicateMessage="This withdrawal event has multiple payments that reference it as their home transaction!"
@@ -237,6 +287,7 @@ class BridgeMonitor extends Component {
               </div>
               <div className="column">
                 <EventTable
+                  fetch={this.fetchPayments}
                   events={this.state.payments}
                   header={config.homeNetworkName + " Withdrawals"}
                   duplicateMessage="The home transaction of this payment has other payments that also reference it!"
