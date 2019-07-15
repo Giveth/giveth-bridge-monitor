@@ -8,6 +8,9 @@ const configurations = {
     title: 'localhost',
     feathersConnection: 'http://localhost:3030',
     feathersDappConnection: 'https://localhost:3030',
+    dappUrl: "http://localhost:3010/",
+    dappMailerUrl: "http://127.0.0.1:3050",
+    dappMailerSecret: ""
   },
   develop: {
     title: 'develop',
@@ -18,6 +21,9 @@ const configurations = {
     actualDappURL: 'https://develop.giveth.io/',
     homeNetworkName: 'Ropsten',
     foreignNetworkName: 'Rinkeby',
+    dappUrl: "https://develop.giveth.io",
+    dappMailerUrl: "http://127.0.0.1:3050",
+    dappMailerSecret: ""
   },
   release: {
     title: 'release',
@@ -28,6 +34,9 @@ const configurations = {
     actualDappURL: 'https://release.giveth.io/',
     homeNetworkName: 'Ropsten',
     foreignNetworkName: 'Rinkeby',
+    dappUrl: "https://release.giveth.io",
+    dappMailerUrl: "http://127.0.0.1:3050",
+    dappMailerSecret: ""
   },
   beta: {
     title: 'beta',
@@ -38,6 +47,9 @@ const configurations = {
     actualDappURL: 'https://beta.giveth.io/',
     homeNetworkName: 'Mainnet',
     foreignNetworkName: 'Rinkeby',
+    dappUrl: "https://beta.giveth.io",
+    dappMailerUrl: "http://127.0.0.1:3050",
+    dappMailerSecret: ""
   },
   // mainnet: {
   //   title: 'mainnet',
