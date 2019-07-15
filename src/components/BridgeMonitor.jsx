@@ -174,9 +174,15 @@ class BridgeMonitor extends Component {
                 })
                 .then(result => {
                   let r = Object.assign({}, this.state.recipients);
+                  let e = Object.assign({}, this.state.emails);
                   if (result.data.length > 0 && result.data[0].name) {
                     r[recipient] = result.data[0].name;
-                    this.setState({ recipients: r });
+                    if (result.data[0].email) {
+                      e[recipient] = result.data[0].email;
+                      this.setState({ recipients: r, emails: e });
+                    } else {
+                      this.setState({ recipients: r});
+                    } 
                   }
                 });
             }
@@ -199,12 +205,14 @@ class BridgeMonitor extends Component {
                     })
                     .then(result => {
                       let m = Object.assign({}, this.state.milestones);
+                      let n = Object.assign({}, this.state.milestoneNames);
                       if (result.data.length > 0) {
                         let milestone = result.data[0];
                         m[reference] = `${config.actualDappURL}campaigns/${
                           milestone.campaignId
                           }/milestones/${milestone._id}`;
-                        this.setState({ milestones: m });
+                        n[reference] = milestone.title
+                        this.setState({ milestones: m, milestoneNames: n });
                       }
                     });
                 }
