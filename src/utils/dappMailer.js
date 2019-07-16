@@ -2,11 +2,12 @@
 
 const logger = require('winston');
 const rp = require('request-promise');
+const config = require('../../feathers-src/app')
 
 const sendEmail = (app, data) => {
   // add the dapp url that this feathers serves for
-  Object.assign(data, { dappUrl: app.get('dappUrl') });
-  const dappMailerUrl = app.get('dappMailerUrl');
+  Object.assign(data, { dappUrl: config.get('dappUrl') });
+  const dappMailerUrl = config.get('dappMailerUrl');
 
   if (!dappMailerUrl) {
     logger.info(`skipping email notification. Missing dappMailerUrl in configuration file`);
@@ -28,7 +29,7 @@ const sendEmail = (app, data) => {
     method: 'POST',
     url: `${dappMailerUrl}/send`,
     headers: {
-      Authorization: app.get('dappMailerSecret'),
+      Authorization: config.get('dappMailerSecret'),
     },
     form: data,
     json: true,

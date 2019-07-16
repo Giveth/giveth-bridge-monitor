@@ -13,5 +13,8 @@
   "homeNodeURL": "http://localhost:8545",
   "foreignNodeURL": "http://localhost:8546",
   "homeContractAddress" : "0x28337E63a325AEfc6C59E0f5f43Fc87943A3714a",
-  "foreignContractAddress" : "0x654a5675Ce63c03abF9b17864a96dBE29a392454"
+  "foreignContractAddress" : "0x654a5675Ce63c03abF9b17864a96dBE29a392454",
+  "dappUrl": "https://develop.giveth.io",
+  "dappMailerUrl": "http://127.0.0.1:3050",
+  "dappMailerSecret": ""
 }

@@ -10,5 +10,8 @@
   "homeNodeURL": "wss://mainnet.eth.aragon.network/ws",
   "foreignNodeURL": "wss://rinkeby.giveth.io/ws",
   "homeContractAddress" : "0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7",
-  "foreignContractAddress" : "0xfF9CD5140e79377feB23f6DFaF1f8b558C0FE621"
+  "foreignContractAddress" : "0xfF9CD5140e79377feB23f6DFaF1f8b558C0FE621",
+  "dappUrl": "https://beta.giveth.io",
+  "dappMailerUrl": "http://127.0.0.1:3050",
+  "dappMailerSecret": ""
 }
