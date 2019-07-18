@@ -7,6 +7,7 @@ import config from '../configuration';
 
 import Web3Button from './Web3Button';
 import DelayModal from './DelayModal';
+import DateLabel from './DateLabel';
 
 const client = feathers();
 client.configure(feathers.socketio(io(config.feathersDappConnection)));
@@ -98,9 +99,12 @@ class PaymentsTable extends Component {
           {
             id: 'payTime',
             Header: 'Earliest Pay Time',
-            accessor: datum => new Date(datum.earliestPayTime).toUTCString(),
+            accessor: datum => datum.earliestPayTime,
             width: 220,
             sortable: false,
+            Cell: ({ row }) => {
+              return <DateLabel date={row.payTime} />
+            }
           },
           {
             id: 'status',
@@ -178,7 +182,7 @@ class PaymentsTable extends Component {
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
           </span>
-          <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
+          <span className="event-name"><DateLabel date={this.props.lastCheckin} /></span>
           {securityGuardNeedsToCheckin() && (
             <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
