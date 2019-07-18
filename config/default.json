@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": 3030,
+  "port": 3031,
   "public": "../public-feathers/",
   "paginate": {
     "default": 300,

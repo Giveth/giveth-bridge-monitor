@@ -2,7 +2,7 @@
 
 const logger = require('winston');
 const rp = require('request-promise');
-const config = require('../../feathers-src/app')
+const config = require('../app')
 
 const sendEmail = (app, data) => {
   // add the dapp url that this feathers serves for

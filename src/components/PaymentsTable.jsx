@@ -7,7 +7,6 @@ import config from '../configuration';
 
 import Web3Button from './Web3Button';
 import DelayModal from './DelayModal';
-import Notifications from '../utils/dappMailer';
 
 const client = feathers();
 client.configure(feathers.socketio(io(config.feathersDappConnection)));
@@ -75,24 +74,6 @@ class PaymentsTable extends Component {
     else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'DAI';
     else return tokenAddress;
   };
-
-
-  sendPaidEmail = (payment) => {
-    if (this.props.emails.hasOwnProperty(payment.event.returnValues.recipient)) {
-      try {
-        Notifications.milestonePaid(config, {
-          recipient: this.props.emails[payment.event.returnValues.recipient],
-          user: this.props.recipients[payment.event.returnValues.recipient],
-          milestoneTitle: this.props.milestoneNames[payment.event.returnValues.reference],
-          amount: payment.event.returnValues.amount,
-          token: payment.event.returnValues.token,
-          address: payment.event.returnValues.recipient,
-        });
-      } catch (e) {
-        // ignore missing recipient
-      }
-    } 
-  }
 
   render() {
     const columns = [
@@ -170,7 +151,6 @@ class PaymentsTable extends Component {
                 let contract = config.getContract(context);
                 if (contract) {
                   contract.methods.disburseAuthorizedPayment(row.ids).send({from: context.account})
-                  this.sendPaidEmail(row.ids)
                 }
               }} text="Pay" />
               <Web3Button show={(context) => config.whitelist.includes(context.account) && row.status !== 'Paid'} onClick={() => {this.setState({delayId: row.ids})}} text="Delay" /></div>)
@@ -219,9 +199,6 @@ class PaymentsTable extends Component {
             let contract = config.getContract(context);
             if (contract) {
               contract.methods.disburseAuthorizedPayments(pendingPayments).send({from: context.account})
-              pendingPayments.forEach(payment => {
-                this.sendPaidEmail(payment)
-              });
             }
           }} text="Disburse All Payments" />
         </div>

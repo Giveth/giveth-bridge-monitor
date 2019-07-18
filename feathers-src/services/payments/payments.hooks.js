@@ -1,4 +1,69 @@
+const Notifications = require('../../utils/dappMailer');
+
+function getUserToSendMail(payment) {
+  context.app.service('users').find({
+    query: {
+      address: payment.event.returnValues.recipient
+    }
+  })
+  .then(result => {
+    if (result.data.length > 0 && result.data[0].name) {
+      var name = result.data[0].name;
+      if (result.data[0].email) {
+        var email = result.data[0].email;
+        getMilestoneName(name, email, payment)
+      }
+    }
+  });
+}
+
+function getMilestoneName(name, email, payment) {
+  context.app.service('donations').find({
+    query: {
+      txHash: payment.event.returnValues.reference
+    }
+  })
+  .then(donation => {
+    if (donation.data && donation.data.length > 0) {
+      context.app
+        .service('milestones')
+        .find({
+          query: {
+            _id: donation.data[0].ownerTypeId
+          }
+        })
+        .then(result => {
+          if (result.data.length > 0) {
+            var milestone = result.data[0];
+            var milestoneName = milestone.title
+            sendPaidEmail(payment, name, email, milestoneName)
+          }
+        });
+    }
+  });
+}
+
+
+function sendPaidEmail (payment, name, email, milestoneName) {
+  if (this.props.emails.hasOwnProperty(payment.event.returnValues.recipient)) {
+    try {
+      Notifications.milestonePaid(config, {
+        recipient: email,
+        user: name,
+        milestoneTitle: milestoneName,
+        amount: payment.event.returnValues.amount,
+        token: payment.event.returnValues.token,
+        address: payment.event.returnValues.recipient,
+      });
+    } catch (e) {
+      // ignore missing recipient
+    }
+  } 
+}
+
+
 module.exports = {
+  
   before: {
     all: [],
     find: [],
@@ -21,6 +86,8 @@ module.exports = {
 
         // if no withdrawals are found, bail
         if (withdrawals.total === 0) return context;
+
+        getUserToSendMail(payment)
 
         const withdrawal = withdrawals.data[0];
         const withdrawal_id = withdrawal._id;
