@@ -182,7 +182,7 @@ class PaymentsTable extends Component {
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
           </span>
-          <span className="event-name">{new Date(this.props.lastCheckin).toUTCString()}</span>
+          <span className="event-name"><DateLabel date={this.props.lastCheckin} /></span>
           {securityGuardNeedsToCheckin() && (
             <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
