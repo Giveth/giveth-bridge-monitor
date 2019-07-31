@@ -190,6 +190,10 @@ const populate = async () => {
     const isAuthorized = spender.returnValues.authorized;
     const address = spender.returnValues.spender;
 
+    if (!address || address === undefined || address == 'undefined') {
+      return false;
+    }
+
     // See if the spender as previously been authorized
     const previousRecord = await app.service('spenders').find({
       query: {

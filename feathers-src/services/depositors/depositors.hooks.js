@@ -8,6 +8,9 @@ module.exports = {
         const foreignNodeURL = context.app.get('foreignNodeURL');
         const foreignWeb3 = new Web3(foreignNodeURL);
         const address = context.app.get('depositor');
+        if (!address || address === undefined || address == 'undefined') {
+          return context;
+        }
         const balance = await foreignWeb3.eth.getBalance(address);
         context.result = { address, balance: foreignWeb3.utils.fromWei(balance) };
         return context;

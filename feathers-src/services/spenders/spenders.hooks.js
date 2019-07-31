@@ -20,6 +20,9 @@ module.exports = {
       // Update the balance of each spender and pass it along with the record
       await asyncForEach(context.result.data, async (record) => {
         const address = record.event.returnValues.spender;
+        if (!address || address === undefined || address == 'undefined') {
+          return context;
+        }
         const balance = await homeWeb3.eth.getBalance(address);
         record.balance = homeWeb3.utils.fromWei(balance);
       });
