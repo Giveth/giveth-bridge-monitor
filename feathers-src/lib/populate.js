@@ -53,6 +53,11 @@ const populate = async () => {
   console.log('Retrieving any stored block range...');
   const range = await app.service('range').get(1);
   console.log('Success!');
+
+  const securityGuardLastCheckin =
+    (await homeContract.methods.securityGuardLastCheckin().call()) * 1000;
+  app.set('securityGuardLastCheckin', securityGuardLastCheckin);
+
   // Either no new home or foreign blocks, or an incorrect current block number was given
   if (currentHomeBlock < range.home || currentForeignBlock < range.foreign) {
     console.log(
@@ -101,10 +106,6 @@ const populate = async () => {
     return true;
   }
   console.log('Success!');
-
-  const securityGuardLastCheckin =
-    (await homeContract.methods.securityGuardLastCheckin().call()) * 1000;
-  app.set('securityGuardLastCheckin', securityGuardLastCheckin);
 
   console.log('Blockchain interaction finished, creating records...');
 
