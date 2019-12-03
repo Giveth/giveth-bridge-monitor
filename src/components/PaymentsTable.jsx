@@ -72,7 +72,8 @@ class PaymentsTable extends Component {
 
   getTokenName = (tokenAddress) => {
     if (tokenAddress === "0x0000000000000000000000000000000000000000") return 'ETH';
-    else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'DAI';
+    else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'SAI';
+    else if (tokenAddress === "0x6b175474e89094c44da98b954eedeac495271d0f") return 'DAI';
     else return tokenAddress;
   };
 
