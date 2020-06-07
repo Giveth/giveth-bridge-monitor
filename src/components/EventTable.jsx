@@ -78,7 +78,7 @@ class EventTable extends Component {
           {
             id: 'block',
             Header: 'Block #',
-            accessor: datum => datum.event.blockNumber.toLocaleString()
+            accessor: datum => Number(datum.event.blockNumber)
           }]
       }
     ];
