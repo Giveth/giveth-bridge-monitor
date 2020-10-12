@@ -74,6 +74,7 @@ class PaymentsTable extends Component {
     if (tokenAddress === "0x0000000000000000000000000000000000000000") return 'ETH';
     else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'SAI';
     else if (tokenAddress === "0x6B175474E89094C44Da98b954EedeAC495271d0F") return 'DAI';
+    else if (tokenAddress === "0xD56daC73A4d6766464b38ec6D91eB45Ce7457c44") return 'PAN';
     else return tokenAddress;
   };
 
