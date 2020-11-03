@@ -75,6 +75,9 @@ class PaymentsTable extends Component {
     else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'SAI';
     else if (tokenAddress === "0x6B175474E89094C44Da98b954EedeAC495271d0F") return 'DAI';
     else if (tokenAddress === "0xD56daC73A4d6766464b38ec6D91eB45Ce7457c44") return 'PAN';
+    else if (tokenAddress === "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599") return 'WBTC';
+    else if (tokenAddress === "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48") return 'UDSC';
+    else if (tokenAddress === "0xa117000000f279D81A1D3cc75430fAA017FA5A2e") return 'ANT';
     else return tokenAddress;
   };
 
