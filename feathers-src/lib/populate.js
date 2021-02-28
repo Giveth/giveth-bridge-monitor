@@ -184,7 +184,6 @@ const populate = async () => {
   });
 
   await asyncForEach(paymentExecutedEvents, async paymentExecuted => {
-    console.log('PaymentExecuted:', paymentExecuted);
     await app.service('payments').patch(null, {
       paymentTransactionHash: paymentExecuted.transactionHash,
     }, {
@@ -192,7 +191,6 @@ const populate = async () => {
         "event.returnValues.idPayment": paymentExecuted.returnValues.idPayment,
       }
     })
-
   })
 
   // make sure spenderEvents are in order by block
