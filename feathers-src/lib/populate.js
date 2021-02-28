@@ -115,7 +115,8 @@ const populate = async () => {
   );
   let depositEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Deposit');
   let withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
-  let paymentEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
+  let paymentAuthorizedEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
+  let paymentExecutedEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentExecuted');
 
   let spenderEvents = homeEvents.filter(homeEvent => homeEvent.event == 'SpenderAuthorization');
   let spenderAuths = spenderEvents.filter(event => event.returnValues.authorized);
@@ -163,13 +164,13 @@ const populate = async () => {
     });
   });
 
-  await asyncForEach(paymentEvents, async payment => {
+  await asyncForEach(paymentAuthorizedEvents, async paymentAuthorized => {
     await homeContract.methods
-      .authorizedPayments(payment.returnValues.idPayment)
+      .authorizedPayments(paymentAuthorized.returnValues.idPayment)
       .call()
       .then(p =>
         app.service('payments').create({
-          event: payment,
+          event: paymentAuthorized,
           matched: false,
           paid: p.paid,
           canceled: p.canceled,
@@ -177,10 +178,20 @@ const populate = async () => {
           earliestPayTime: Number(p.earliestPayTime) * 1000,
           securityGuardDelay: Number(p.securityGuardDelay),
           hasDuplicates: false,
-          _id: payment.id,
+          _id: paymentAuthorized.id,
         }),
       );
   });
+
+  await asyncForEach(paymentExecutedEvents, async paymentExecuted => {
+    await app.service('payments').patch(null, {
+      paymentTransactionHash: paymentExecuted.transactionHash,
+    }, {
+      query: {
+        "event.returnValues.idPayment": paymentExecuted.returnValues.idPayment,
+      }
+    })
+  })
 
   // make sure spenderEvents are in order by block
   spenderEvents.sort((a, b) => {
