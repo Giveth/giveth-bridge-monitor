@@ -6,8 +6,8 @@ const {
 const configurations = {
   localhost: {
     title: 'localhost',
-    feathersConnection: 'http://localhost:3030',
-    feathersDappConnection: 'https://localhost:3030',
+    feathersConnection: 'http://localhost:3040',
+    feathersDappConnection: 'https://localhost:3040',
   },
   develop: {
     title: 'develop',
@@ -51,7 +51,7 @@ const config = Object.assign({}, configurations[REACT_APP_ENVIRONMENT]);
 
 config.feathersConnection = REACT_APP_FEATHERJS_CONNECTION_URL || config.feathersConnection;
 
-// this whitelist should be the adress of the security guard, as well as any other addresses 
+// this whitelist should be the adress of the security guard, as well as any other addresses
 // which need access to all payments buttons even if they don't have access to use them all.
 config.whitelist = ['0xDAa172456F5815256831aeE19C8A370a83522871','0x839395e20bbB182fa440d08F850E6c7A8f6F0780'];
 
