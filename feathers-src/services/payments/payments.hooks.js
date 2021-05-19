@@ -6,7 +6,7 @@ module.exports = {
     create: [
       async context => {
         const payment = context.data;
-        const reference = payment.event.returnValues.reference;
+        const { reference } = payment.event.returnValues;
 
         // find referenced withdrawal
         // TODO: this could probably be done with get(reference), since the hashes are used as the ids, but it might need a try/catch
@@ -23,7 +23,7 @@ module.exports = {
         if (withdrawals.total === 0) return context;
 
         const withdrawal = withdrawals.data[0];
-        const withdrawal_id = withdrawal._id;
+        const withdrawalId = withdrawal._id;
 
         // if the withdrawal has already been matched, it now has duplicate references
         const hasDuplicates = withdrawal.matched;
@@ -39,7 +39,7 @@ module.exports = {
           patch: !hasDuplicates,
         });
 
-        await context.app.service('withdrawals').patch(withdrawal_id, {
+        await context.app.service('withdrawals').patch(withdrawalId, {
           matches,
           matched: true,
           hasDuplicates,

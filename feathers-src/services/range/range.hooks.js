@@ -1,31 +1,30 @@
+const createInitialDoc = async context => {
+  const record = await context.service.Model.findOne();
 
+  if (record) {
+    // eslint-disable-next-line prefer-destructuring
+    // context.result = [record];
+    return context;
+  }
 
+  const homeStart = context.app.get('homeStartBlock');
+  const foreignStart = context.app.get('foreignStartBlock');
+  await context.service.Model.create({
+    home: homeStart,
+    foreign: foreignStart,
+  });
+  // context.result = [recordCreation];
+  return context;
+};
 module.exports = {
   before: {
     all: [],
-    find: [],
-    get: [async (context) => {
-      const record = await context.service.find({query: {_id: 1}});
-
-      if (record.total === 1){
-        context.result = record.data[0];
-        return context;
-      }
-
-      const homeStart = context.app.get('homeStartBlock');
-      const foreignStart = context.app.get('foreignStartBlock');
-      const recordCreation = await context.service.create({
-        _id: 1,
-        home: homeStart,
-        foreign: foreignStart,
-      });
-      context.result = recordCreation;
-      return context;
-    }],
+    find: [createInitialDoc],
+    get: [createInitialDoc],
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   after: {
@@ -35,7 +34,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -45,6 +44,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };

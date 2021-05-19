@@ -12,13 +12,11 @@ import DateLabel from './DateLabel';
 const client = feathers();
 client.configure(feathers.socketio(io(config.feathersDappConnection)));
 
-
 class PaymentsTable extends Component {
-  
   constructor(props) {
     super(props);
     this.state = {
-      delayId: -1
+      delayId: -1,
     };
   }
 
@@ -27,9 +25,18 @@ class PaymentsTable extends Component {
     this.pageSize = 10;
   }
 
-  getRowColor = row => {
+  static getStatus(data) {
+    if (data.canceled) return 'Canceled';
+    if (data.paid) return 'Paid';
+    if (data.earliestPayTime <= Date.now()) return 'Approved';
+    // this means that earliestPayTime hasn't passed
+    if (data.securityGuardDelay > 0) return 'Delayed';
+    return 'Pending';
+  }
+
+  static getRowColor(row) {
     let color;
-    const status = this.getStatus(row.original);
+    const status = PaymentsTable.getStatus(row.original);
     switch (status) {
       case 'Canceled':
         color = 'rgba(176, 0, 0, 0.5)';
@@ -47,39 +54,31 @@ class PaymentsTable extends Component {
         color = 'rgba(255, 255, 255, 1)';
     }
     return color;
-  };
+  }
 
-  getTrProps = (state, row, instance) => {
+  // eslint-disable-next-line no-unused-vars
+  static getTrProps(state, row, instance) {
     if (row) {
       return {
         style: {
-          background: this.getRowColor(row),
+          background: PaymentsTable.getRowColor(row),
           color: 'rgba(24, 24, 24, 0.8)',
         },
       };
     }
     return {};
-  };
+  }
 
-  getStatus = data => {
-    if (data.canceled) return 'Canceled';
-    if (data.paid) return 'Paid';
-    if (data.earliestPayTime <= Date.now()) return 'Approved';
-    // this means that earliestPayTime hasn't passed
-    if (data.securityGuardDelay > 0) return 'Delayed';
-    return 'Pending';
-  };
-
-  getTokenName = (tokenAddress) => {
-    if (tokenAddress === "0x0000000000000000000000000000000000000000") return 'ETH';
-    else if (tokenAddress === "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359") return 'SAI';
-    else if (tokenAddress === "0x6B175474E89094C44Da98b954EedeAC495271d0F") return 'DAI';
-    else if (tokenAddress === "0xD56daC73A4d6766464b38ec6D91eB45Ce7457c44") return 'PAN';
-    else if (tokenAddress === "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599") return 'WBTC';
-    else if (tokenAddress === "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48") return 'UDSC';
-    else if (tokenAddress === "0xa117000000f279D81A1D3cc75430fAA017FA5A2e") return 'ANT';
-    else return tokenAddress;
-  };
+  static getTokenName(tokenAddress) {
+    if (tokenAddress === '0x0000000000000000000000000000000000000000') return 'ETH';
+    if (tokenAddress === '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359') return 'SAI';
+    if (tokenAddress === '0x6B175474E89094C44Da98b954EedeAC495271d0F') return 'DAI';
+    if (tokenAddress === '0xD56daC73A4d6766464b38ec6D91eB45Ce7457c44') return 'PAN';
+    if (tokenAddress === '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599') return 'WBTC';
+    if (tokenAddress === '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48') return 'UDSC';
+    if (tokenAddress === '0xa117000000f279D81A1D3cc75430fAA017FA5A2e') return 'ANT';
+    return tokenAddress;
+  }
 
   render() {
     const columns = [
@@ -98,7 +97,7 @@ class PaymentsTable extends Component {
           {
             id: 'ids',
             Header: 'ID',
-            accessor: datum => parseInt(datum.event.returnValues.idPayment),
+            accessor: datum => parseInt(datum.event.returnValues.idPayment, 10),
             width: 50,
           },
           {
@@ -108,13 +107,13 @@ class PaymentsTable extends Component {
             width: 220,
             sortable: false,
             Cell: ({ row }) => {
-              return <DateLabel date={row.payTime} />
-            }
+              return <DateLabel date={row.payTime} />;
+            },
           },
           {
             id: 'status',
             Header: 'Status',
-            accessor: datum => this.getStatus(datum),
+            accessor: datum => PaymentsTable.getStatus(datum),
             // Cell: row => <span> {(row.original.matched && !row.original.hasDuplicates)? '\u2714' : 	'\u2716'} </span>,
             width: 100,
           },
@@ -122,9 +121,19 @@ class PaymentsTable extends Component {
             id: 'recipient',
             Header: 'Recipient',
             Cell: ({ row }) => {
-              return (<a target="_blank" rel="noopener noreferrer" href={(`${config.actualDappURL}profile/${row._original.event.returnValues.recipient}`)}>
-                {(this.props.recipients.hasOwnProperty(row._original.event.returnValues.recipient) ? this.props.recipients[row._original.event.returnValues.recipient] : "Unknown") + " - " + row._original.event.returnValues.recipient}
-              </a>)
+              return (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`${config.actualDappURL}profile/${row._original.event.returnValues.recipient}`}
+                >
+                  {`${
+                    this.props.recipients.hasOwnProperty(row._original.event.returnValues.recipient)
+                      ? this.props.recipients[row._original.event.returnValues.recipient]
+                      : 'Unknown'
+                  } - ${row._original.event.returnValues.recipient}`}
+                </a>
+              );
             },
           },
           {
@@ -136,7 +145,7 @@ class PaymentsTable extends Component {
           {
             id: 'token',
             Header: 'Token',
-            accessor: datum => this.getTokenName(datum.event.returnValues.token),
+            accessor: datum => PaymentsTable.getTokenName(datum.event.returnValues.token),
             width: 60,
           },
           {
@@ -144,11 +153,20 @@ class PaymentsTable extends Component {
             Header: 'Link',
             width: 80,
             Cell: ({ row }) => {
-              if (this.props.milestones.hasOwnProperty(row._original.event.returnValues.reference)) {
-                return (<a target="_blank" rel="noopener noreferrer" href={this.props.milestones[row._original.event.returnValues.reference]}>Milestone</a>)
-              } else {
-                return "Unknown"
+              if (
+                this.props.milestones.hasOwnProperty(row._original.event.returnValues.reference)
+              ) {
+                return (
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={this.props.milestones[row._original.event.returnValues.reference]}
+                  >
+                    Milestone
+                  </a>
+                );
               }
+              return 'Unknown';
             },
           },
           {
@@ -156,13 +174,35 @@ class PaymentsTable extends Component {
             Header: 'Actions',
             width: 110,
             Cell: ({ row }) => {
-              return (<div><Web3Button show={(context) => (config.whitelist.includes(context.account) || row._original.event.returnValues.recipient === context.account) && row.status === 'Approved'} onClick={(context) => {
-                let contract = config.getContract(context);
-                if (contract) {
-                  contract.methods.disburseAuthorizedPayment(row.ids).send({from: context.account})
-                }
-              }} text="Pay" />
-              <Web3Button show={(context) => config.whitelist.includes(context.account) && row.status !== 'Paid'} onClick={() => {this.setState({delayId: row.ids})}} text="Delay" /></div>)
+              return (
+                <div>
+                  <Web3Button
+                    show={context =>
+                      (config.whitelist.includes(context.account) ||
+                        row._original.event.returnValues.recipient === context.account) &&
+                      row.status === 'Approved'
+                    }
+                    onClick={context => {
+                      const contract = config.getContract(context);
+                      if (contract) {
+                        contract.methods
+                          .disburseAuthorizedPayment(row.ids)
+                          .send({ from: context.account });
+                      }
+                    }}
+                    text="Pay"
+                  />
+                  <Web3Button
+                    show={context =>
+                      config.whitelist.includes(context.account) && row.status !== 'Paid'
+                    }
+                    onClick={() => {
+                      this.setState({ delayId: row.ids });
+                    }}
+                    text="Delay"
+                  />
+                </div>
+              );
             },
           },
         ],
@@ -172,44 +212,59 @@ class PaymentsTable extends Component {
     const securityGuardNeedsToCheckin = () => {
       return (
         new Date(this.props.lastCheckin) < Date.now() - 1000 * 60 * 60 * 25 && // 25 hrs ago
-        this.props.payments.some(p => this.getStatus(p) === 'Approved')
+        this.props.payments.some(p => PaymentsTable.getStatus(p) === 'Approved')
       );
     };
 
     const pendingPayments = this.props.payments
-      .filter(p => this.getStatus(p) === 'Approved')
+      .filter(p => PaymentsTable.getStatus(p) === 'Approved')
       .map(p => p.event.returnValues.idPayment);
 
     return (
       <div className="authorized-payments">
-      <DelayModal handleClose={() => this.setState({delayId: -1})} delayId={this.state.delayId} />
+        <DelayModal
+          handleClose={() => this.setState({ delayId: -1 })}
+          delayId={this.state.delayId}
+        />
         <div className="event-subcontainer">
           <span className="event-name">
             <strong>- Security Guard Last Checkin -</strong>
           </span>
-          <span className="event-name"><DateLabel date={this.props.lastCheckin} /></span>
+          <span className="event-name">
+            <DateLabel date={this.props.lastCheckin} />
+          </span>
           {securityGuardNeedsToCheckin() && (
             <p className="alert">Security Guard needs to checkin so payments can go out!</p>
           )}
-          <Web3Button show={(context) => config.whitelist.includes(context.account)} onClick={(context) => {
-            let contract = config.getContract(context);
-            if (contract) {
-              contract.methods.checkIn().send({from: context.account})
-            }
-          }} text="Check In" />
-          
+          <Web3Button
+            show={context => config.whitelist.includes(context.account)}
+            onClick={context => {
+              const contract = config.getContract(context);
+              if (contract) {
+                contract.methods.checkIn().send({ from: context.account });
+              }
+            }}
+            text="Check In"
+          />
+
           <span className="event-name">
             <strong>- Payments to Disburse -</strong>
           </span>
-          <span className="event-name">
-            [{pendingPayments.toString()}]
-          </span>
-          <Web3Button show={(context) => config.whitelist.includes(context.account) && pendingPayments.length > 0} onClick={(context) => {
-            let contract = config.getContract(context);
-            if (contract) {
-              contract.methods.disburseAuthorizedPayments(pendingPayments).send({from: context.account})
+          <span className="event-name">[{pendingPayments.toString()}]</span>
+          <Web3Button
+            show={context =>
+              config.whitelist.includes(context.account) && pendingPayments.length > 0
             }
-          }} text="Disburse All Payments" />
+            onClick={context => {
+              const contract = config.getContract(context);
+              if (contract) {
+                contract.methods
+                  .disburseAuthorizedPayments(pendingPayments)
+                  .send({ from: context.account });
+              }
+            }}
+            text="Disburse All Payments"
+          />
         </div>
         <div className="event-name">Please make sure you have enabled pop-ups on this site.</div>
         <div className="flex_container">
@@ -217,24 +272,24 @@ class PaymentsTable extends Component {
             flexGrow={1}
             data={this.props.payments}
             columns={columns}
-            showPagination={true}
-            showPaginationBottom={true}
+            showPagination
+            showPaginationBottom
             defaultPageSize={10}
             onPageChange={page => {
-              if(page > this.page){
+              if (page > this.page) {
                 this.props.fetchPayments(page, this.pageSize);
               }
               this.page = page;
             }}
             onPageSizeChange={pageSize => {
-              if(pageSize > this.pageSize){
+              if (pageSize > this.pageSize) {
                 this.props.fetchPayments(this.page, pageSize);
               }
               this.pageSize = pageSize;
             }}
-            sortable={true}
-            filterable={true}
-            getTrProps={this.getTrProps}
+            sortable
+            filterable
+            getTrProps={PaymentsTable.getTrProps}
             collapseOnDataChange={false}
             defaultSorted={[
               {

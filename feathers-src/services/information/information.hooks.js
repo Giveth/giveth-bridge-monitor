@@ -1,22 +1,22 @@
-
-
 module.exports = {
   before: {
     all: [],
-    find: [(context) => {
-      context.result = {
-        homeContract: context.app.get('homeContractAddress'),
-        foreignContract: context.app.get('foreignContractAddress'),
-        securityGuardLastCheckin: context.app.get('securityGuardLastCheckin')
-      };
+    find: [
+      context => {
+        context.result = {
+          homeContract: context.app.get('homeContractAddress'),
+          foreignContract: context.app.get('foreignContractAddress'),
+          securityGuardLastCheckin: context.app.get('securityGuardLastCheckin'),
+        };
 
-      return context;
-    }],
+        return context;
+      },
+    ],
     get: [],
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   after: {
@@ -26,7 +26,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -36,6 +36,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };

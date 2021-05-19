@@ -1,12 +1,13 @@
-const NeDB = require('nedb');
-const path = require('path');
+module.exports = app => {
+  const mongooseClient = app.get('mongooseClient');
+  const { Schema } = mongooseClient;
 
-module.exports = function (app) {
-  const dbPath = app.get('nedb');
-  const Model = new NeDB({
-    filename: path.join(dbPath, 'withdrawals.db'),
-    autoload: true
-  });
-
-  return Model;
+  const withdrawals = new Schema(
+    {},
+    {
+      timestamp: true,
+      strict: false,
+    },
+  );
+  return mongooseClient.model('withdrawals', withdrawals);
 };

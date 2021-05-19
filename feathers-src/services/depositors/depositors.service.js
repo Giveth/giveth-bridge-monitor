@@ -2,7 +2,7 @@
 const createService = require('feathers-memory');
 const hooks = require('./depositors.hooks');
 
-module.exports = function (app) {
+module.exports = app => {
   const options = {
     name: 'depositors',
     paginate: false,

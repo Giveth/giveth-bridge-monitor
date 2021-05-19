@@ -1,13 +1,13 @@
-const donations = require('./donations/donations.service.js');
-const deposits = require('./deposits/deposits.service.js');
-const payments = require('./payments/payments.service.js');
-const withdrawals = require('./withdrawals/withdrawals.service.js');
-const range = require('./range/range.service.js');
-const spenders = require('./spenders/spenders.service.js');
-const depositors = require('./depositors/depositors.service.js');
-const information = require('./information/information.service.js');
+const donations = require('./donations/donations.service');
+const deposits = require('./deposits/deposits.service');
+const payments = require('./payments/payments.service');
+const withdrawals = require('./withdrawals/withdrawals.service');
+const range = require('./range/range.service');
+const spenders = require('./spenders/spenders.service');
+const depositors = require('./depositors/depositors.service');
+const information = require('./information/information.service');
 // eslint-disable-next-line no-unused-vars
-module.exports = function (app) {
+module.exports = app => {
   app.configure(donations);
   app.configure(deposits);
   app.configure(payments);

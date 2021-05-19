@@ -1,13 +1,10 @@
-
-
 module.exports = {
   before: {
     all: [],
     find: [],
     get: [],
     create: [
-      async (context) => {
-
+      async context => {
         const hash = context.data.event.transactionHash;
 
         const payments = await context.app.service('payments').find({
@@ -16,13 +13,13 @@ module.exports = {
             'event.returnValues.recipient': context.data.event.returnValues.recipient,
             'event.returnValues.token': context.data.event.returnValues.token,
             'event.returnValues.amount': context.data.event.returnValues.amount,
-          }
+          },
         });
 
         if (payments.total === 0) return context;
-        const hasDuplicates = (payments.total > 1);
+        const hasDuplicates = payments.total > 1;
 
-        payments.data.map((payment) => {
+        payments.data.forEach(payment => {
           const match = {
             hash: payment.event.transactionHash,
             patch: !hasDuplicates,
@@ -37,23 +34,21 @@ module.exports = {
         });
 
         return context;
-      }
+      },
     ],
     update: [],
     patch: [
-      async (context) => {
-
-
-        const hasDuplicates = context.data.hasDuplicates;
+      async context => {
+        const { hasDuplicates } = context.data;
         // if the withdrawal doesn't have any duplicates nothing needs to be done here
         if (!hasDuplicates) return context;
 
-        const matches = context.data.matches;
+        const { matches } = context.data;
         let paymentToPatch;
         let index;
         // find any payments that aren't already flagged as duplicates
         // (there SHOULD only be one, and it SHOULD be the first, but this is a safeguard)
-        for (let i = 0; i < matches.length; i++){
+        for (let i = 0; i < matches.length; i++) {
           if (matches[i].patch) {
             paymentToPatch = matches[i]._id;
             index = i;
@@ -68,12 +63,10 @@ module.exports = {
         });
         context.data.matches[index].patch = false;
 
-
         return context;
-
-      }
+      },
     ],
-    remove: []
+    remove: [],
   },
 
   after: {
@@ -113,7 +106,7 @@ module.exports = {
     ],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -123,6 +116,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };

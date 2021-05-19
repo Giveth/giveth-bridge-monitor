@@ -1,10 +1,11 @@
-const app = require('../app');
 const Web3 = require('web3');
+const HomeBridgeContract = require('giveth-bridge/build/GivethBridge.json');
+const ForeignBridgeContract = require('giveth-bridge/build/ForeignGivethBridge.json');
+const app = require('../app');
 const asyncForEach = require('./helpers/asyncForEach');
 
-const HomeBridgeContract = require('giveth-bridge/build/GivethBridge.json');
 const HomeBridgeABI = HomeBridgeContract.compilerOutput.abi;
-const ForeignBridgeContract = require('giveth-bridge/build/ForeignGivethBridge.json');
+
 const ForeignBridgeABI = ForeignBridgeContract.compilerOutput.abi;
 
 const populate = async () => {
@@ -12,7 +13,8 @@ const populate = async () => {
   const foreignNodeURL = app.get('foreignNodeURL');
 
   console.log('Creating Web3 objects...');
-  let homeWeb3, foreignWeb3;
+  let homeWeb3;
+  let foreignWeb3;
   try {
     homeWeb3 = new Web3(homeNodeURL);
     foreignWeb3 = new Web3(foreignNodeURL);
@@ -51,7 +53,7 @@ const populate = async () => {
   console.log('Success!');
 
   console.log('Retrieving any stored block range...');
-  const range = await app.service('range').get(1);
+  const [range] = await app.service('range').find({ paginate: false });
   console.log('Success!');
 
   const securityGuardLastCheckin =
@@ -59,7 +61,7 @@ const populate = async () => {
   app.set('securityGuardLastCheckin', securityGuardLastCheckin);
 
   // Either no new home or foreign blocks, or an incorrect current block number was given
-  if (currentHomeBlock < range.home || currentForeignBlock < range.foreign) {
+  if (range && (currentHomeBlock < range.home || currentForeignBlock < range.foreign)) {
     console.log(
       'Either no new home or foreign blocks, or retrieved current block number looks fishy...',
     );
@@ -88,7 +90,8 @@ const populate = async () => {
     return true;
   }
 
-  let homeEvents, foreignEvents;
+  let homeEvents;
+  let foreignEvents;
   try {
     [homeEvents, foreignEvents] = await Promise.all(eventPromises);
   } catch (error) {
@@ -109,18 +112,22 @@ const populate = async () => {
 
   console.log('Blockchain interaction finished, creating records...');
 
-  let donationEvents = homeEvents.filter(homeEvent => homeEvent.event == 'Donate');
-  let donationAndCreationEvents = homeEvents.filter(
-    homeEvent => homeEvent.event == 'DonateAndCreateGiver',
+  const donationEvents = homeEvents.filter(homeEvent => homeEvent.event === 'Donate');
+  const donationAndCreationEvents = homeEvents.filter(
+    homeEvent => homeEvent.event === 'DonateAndCreateGiver',
   );
-  let depositEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Deposit');
-  let withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event == 'Withdraw');
-  let paymentAuthorizedEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentAuthorized');
-  let paymentExecutedEvents = homeEvents.filter(homeEvent => homeEvent.event == 'PaymentExecuted');
+  const depositEvents = foreignEvents.filter(foreignEvent => foreignEvent.event === 'Deposit');
+  const withdrawalEvents = foreignEvents.filter(foreignEvent => foreignEvent.event === 'Withdraw');
+  const paymentAuthorizedEvents = homeEvents.filter(
+    homeEvent => homeEvent.event === 'PaymentAuthorized',
+  );
+  const paymentExecutedEvents = homeEvents.filter(
+    homeEvent => homeEvent.event === 'PaymentExecuted',
+  );
 
-  let spenderEvents = homeEvents.filter(homeEvent => homeEvent.event == 'SpenderAuthorization');
-  let spenderAuths = spenderEvents.filter(event => event.returnValues.authorized);
-  let spenderDeauths = spenderEvents.filter(event => !event.returnValues.authorized);
+  const spenderEvents = homeEvents.filter(homeEvent => homeEvent.event === 'SpenderAuthorization');
+  // const spenderAuths = spenderEvents.filter(event => event.returnValues.authorized);
+  // const spenderDeauths = spenderEvents.filter(event => !event.returnValues.authorized);
 
   await asyncForEach(donationEvents, async donation => {
     await app.service('donations').create({
@@ -184,14 +191,18 @@ const populate = async () => {
   });
 
   await asyncForEach(paymentExecutedEvents, async paymentExecuted => {
-    await app.service('payments').patch(null, {
-      paymentTransactionHash: paymentExecuted.transactionHash,
-    }, {
-      query: {
-        "event.returnValues.idPayment": paymentExecuted.returnValues.idPayment,
-      }
-    })
-  })
+    await app.service('payments').patch(
+      null,
+      {
+        paymentTransactionHash: paymentExecuted.transactionHash,
+      },
+      {
+        query: {
+          'event.returnValues.idPayment': paymentExecuted.returnValues.idPayment,
+        },
+      },
+    );
+  });
 
   // make sure spenderEvents are in order by block
   spenderEvents.sort((a, b) => {
@@ -202,7 +213,7 @@ const populate = async () => {
     const isAuthorized = spender.returnValues.authorized;
     const address = spender.returnValues.spender;
 
-    if (!address || address === undefined || address == 'undefined') {
+    if (!address || address === 'undefined') {
       return false;
     }
 
@@ -219,14 +230,14 @@ const populate = async () => {
       });
     }
 
-    if (!isAuthorized && previousRecord.total != 0) {
+    if (!isAuthorized && previousRecord.total !== 0) {
       await app.service('spenders').remove(previousRecord.data[0]._id);
     }
   });
 
   app.set('depositor', depositor);
 
-  const patched = await app.service('range').patch(1, {
+  await app.service('range').patch(range._id, {
     home: homeRange.toBlock + 1,
     foreign: foreignRange.toBlock + 1,
   });
@@ -255,7 +266,7 @@ const populate = async () => {
   console.log('Success!');
 
   if (currentForeignBlock > foreignRange.toBlock || currentHomeBlock > homeRange.toBlock) {
-    return await populate();
+    return populate();
   }
   return true;
 };

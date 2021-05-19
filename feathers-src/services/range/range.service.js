@@ -1,16 +1,18 @@
 // Initializes the `range` service on path `/range`
-const createService = require('feathers-nedb');
+const createService = require('feathers-mongoose');
 const createModel = require('../../models/range.model');
 const hooks = require('./range.hooks');
+const { defaultFeatherMongooseOptions } = require('../serviceCommons');
 
-module.exports = function (app) {
+module.exports = app => {
   const Model = createModel(app);
   const paginate = app.get('paginate');
 
   const options = {
     name: 'range',
     Model,
-    paginate
+    paginate,
+    ...defaultFeatherMongooseOptions,
   };
 
   // Initialize our service with any options it requires
