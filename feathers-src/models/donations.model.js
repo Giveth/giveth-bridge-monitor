@@ -10,5 +10,6 @@ module.exports = app => {
     },
   );
 
+  donations.index({ 'event.blockNumber': 1 });
   return mongooseClient.model('donations', donations);
 };

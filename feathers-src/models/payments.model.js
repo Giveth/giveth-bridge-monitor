@@ -4,12 +4,13 @@ module.exports = app => {
 
   const payments = new Schema(
     {
-      earliestPayTime: { type: Date },
+      earliestPayTime: { type: Date, index: true },
     },
     {
       timestamp: true,
       strict: false,
     },
   );
+
   return mongooseClient.model('payments', payments);
 };

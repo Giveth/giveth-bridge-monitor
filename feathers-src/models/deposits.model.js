@@ -9,5 +9,7 @@ module.exports = app => {
       strict: false,
     },
   );
+
+  deposits.index({ 'event.blockNumber': 1 });
   return mongooseClient.model('deposits', deposits);
 };

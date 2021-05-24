@@ -10,7 +10,11 @@ import DelayModal from './DelayModal';
 import DateLabel from './DateLabel';
 
 const client = feathers();
-client.configure(feathers.socketio(io(config.feathersDappConnection)));
+client.configure(
+  feathers.socketio(io(config.feathersDappConnection), {
+    transports: ['websocket'],
+  }),
+);
 
 class PaymentsTable extends Component {
   constructor(props) {

@@ -15,7 +15,9 @@ class BridgeMonitor extends Component {
     super(props);
 
     // Bridge feathers
-    const bridgeSocket = io(config.feathersConnection);
+    const bridgeSocket = io(config.feathersConnection, {
+      transports: ['websocket'],
+    });
     const bridgeClient = feathers();
     bridgeClient.configure(
       feathers.socketio(bridgeSocket, {

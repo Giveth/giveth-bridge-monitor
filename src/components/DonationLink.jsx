@@ -4,7 +4,11 @@ import io from 'socket.io-client';
 import config from '../configuration';
 
 const client = feathers();
-client.configure(feathers.socketio(io(config.feathersDappConnection)));
+client.configure(
+  feathers.socketio(io(config.feathersDappConnection), {
+    transports: ['websocket'],
+  }),
+);
 
 class DonationLink extends Component {
   constructor(props) {
