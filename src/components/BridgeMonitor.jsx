@@ -56,6 +56,12 @@ class BridgeMonitor extends Component {
         });
       });
 
+    this.loadEvents = this.loadEvents.bind(this);
+    this.fetchDonations = this.fetchDonations.bind(this);
+    this.fetchDeposits = this.fetchDeposits.bind(this);
+    this.fetchPayments = this.fetchPayments.bind(this);
+    this.fetchWithdrawals = this.fetchWithdrawals.bind(this);
+
     this.loadEvents();
   }
 

@@ -3,7 +3,9 @@ module.exports = app => {
   const { Schema } = mongooseClient;
 
   const payments = new Schema(
-    {},
+    {
+      earliestPayTime: { type: Date },
+    },
     {
       timestamp: true,
       strict: false,

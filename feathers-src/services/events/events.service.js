@@ -1,25 +1,23 @@
-// Initializes the `range` service on path `/range`
+// Initializes the `events` service on path `/events`
 const createService = require('feathers-mongoose');
-const createModel = require('../../models/range.model');
-const hooks = require('./range.hooks');
-const { defaultFeatherMongooseOptions } = require('../serviceCommons');
+const { createModel } = require('../../models/events.model');
+const hooks = require('./events.hooks');
 
 module.exports = app => {
   const Model = createModel(app);
   const paginate = app.get('paginate');
 
   const options = {
-    name: 'range',
+    name: 'events',
     Model,
     paginate,
-    ...defaultFeatherMongooseOptions,
   };
 
   // Initialize our service with any options it requires
-  app.use('/range', createService(options));
+  app.use('/events', createService(options));
 
   // Get our initialized service so that we can register hooks and filters
-  const service = app.service('range');
+  const service = app.service('events');
 
   service.hooks(hooks);
 };
