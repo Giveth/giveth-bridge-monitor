@@ -32,7 +32,7 @@ class PaymentsTable extends Component {
   static getStatus(data) {
     if (data.canceled) return 'Canceled';
     if (data.paid) return 'Paid';
-    if (data.earliestPayTime <= Date.now()) return 'Approved';
+    if (new Date(data.earliestPayTime).getTime() <= Date.now()) return 'Approved';
     // this means that earliestPayTime hasn't passed
     if (data.securityGuardDelay > 0) return 'Delayed';
     return 'Pending';
