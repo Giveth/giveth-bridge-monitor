@@ -56,7 +56,8 @@ class BridgeMonitor extends Component {
         this.setState({
           info,
         });
-      });
+      })
+      .catch(e => console.error(e));
 
     this.loadEvents = this.loadEvents.bind(this);
     this.fetchDonations = this.fetchDonations.bind(this);
@@ -101,7 +102,8 @@ class BridgeMonitor extends Component {
             }),
           };
         });
-      });
+      })
+      .catch(e => console.error(e));
   }
 
   async fetchDeposits(page, pageSize) {
@@ -126,7 +128,8 @@ class BridgeMonitor extends Component {
             }),
           };
         });
-      });
+      })
+      .catch(e => console.error(e));
   }
 
   async fetchWithdrawals(page, pageSize) {
@@ -151,7 +154,8 @@ class BridgeMonitor extends Component {
             }),
           };
         });
-      });
+      })
+      .catch(e => console.error(e));
   }
 
   async fetchPayments(page, pageSize) {
@@ -232,7 +236,8 @@ class BridgeMonitor extends Component {
             }),
           };
         });
-      });
+      })
+      .catch(e => console.error(e));
   }
 
   render() {

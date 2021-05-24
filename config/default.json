@@ -6,7 +6,6 @@
     "default": 300,
     "max": 500
   },
-  "nedb" : "../data",
   "pollTime": 3000,
   "homeStartBlock" :  3287844,
   "foreignStartBlock": 2328625,

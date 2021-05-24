@@ -48,7 +48,8 @@ class Info extends Component {
         this.setState({
           spenders: spenders.data,
         });
-      });
+      })
+      .catch(e => console.error(e));
     client
       .service('depositors')
       .find()
@@ -56,7 +57,8 @@ class Info extends Component {
         this.setState({
           depositor,
         });
-      });
+      })
+      .catch(e => console.error(e));
   }
 
   render() {
