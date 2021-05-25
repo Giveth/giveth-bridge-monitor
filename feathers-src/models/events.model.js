@@ -41,7 +41,10 @@ const createModel = app => {
     },
   );
   event.index({ transactionHash: 1, event: 1 });
-  event.index({ blockNumber: 1, transactionIndex: 1, logIndex: 1 }, { unique: true });
+  event.index(
+    { isHomeEvent: 1, blockNumber: 1, transactionIndex: 1, logIndex: 1 },
+    { unique: true },
+  );
 
   return mongooseClient.model('events', event);
 };

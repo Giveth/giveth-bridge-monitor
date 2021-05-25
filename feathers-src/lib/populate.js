@@ -43,8 +43,8 @@ const processNextWaitingEvent = async () => {
       blockNumber: 1,
       transactionIndex: 1,
       logIndex: 1,
-      $limit: 1,
     },
+    $limit: 1,
   };
 
   const service = app.service('events');
