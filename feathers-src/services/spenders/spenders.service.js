@@ -1,16 +1,16 @@
 // Initializes the `spenders` service on path `/spenders`
-const createService = require('feathers-nedb');
+const createService = require('feathers-mongoose');
 const createModel = require('../../models/spenders.model');
 const hooks = require('./spenders.hooks');
 
-module.exports = function (app) {
+module.exports = app => {
   const Model = createModel(app);
   const paginate = app.get('paginate');
 
   const options = {
     name: 'spenders',
     Model,
-    paginate
+    paginate,
   };
 
   // Initialize our service with any options it requires

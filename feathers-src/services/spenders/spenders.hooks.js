@@ -9,32 +9,33 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   after: {
     all: [],
-    find: [async (context) => {
-      const homeNodeURL = context.app.get('homeNodeURL');
-      const homeWeb3 = new Web3(homeNodeURL);
-      // Update the balance of each spender and pass it along with the record
-      await asyncForEach(context.result.data, async (record) => {
-        const address = record.event.returnValues.spender;
-        if (!address || address === undefined || address == 'undefined') {
-          return context;
-        }
-        const balance = await homeWeb3.eth.getBalance(address);
-        record.balance = homeWeb3.utils.fromWei(balance);
-      });
+    find: [
+      async context => {
+        const homeNodeURL = context.app.get('homeNodeURL');
+        const homeWeb3 = new Web3(homeNodeURL);
+        // Update the balance of each spender and pass it along with the record
+        await asyncForEach(context.result.data, async record => {
+          const address = record.event.returnValues.spender;
+          if (!address || address === 'undefined') {
+            return context;
+          }
+          const balance = await homeWeb3.eth.getBalance(address);
+          record.balance = homeWeb3.utils.fromWei(balance);
+        });
 
-      return context;
-
-    }],
+        return context;
+      },
+    ],
     get: [],
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -44,6 +45,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };

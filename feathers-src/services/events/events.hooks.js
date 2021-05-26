@@ -1,17 +1,7 @@
 module.exports = {
   before: {
     all: [],
-    find: [
-      context => {
-        context.result = {
-          homeContract: context.app.get('homeContractAddress'),
-          foreignContract: context.app.get('foreignContractAddress'),
-          securityGuardLastCheckin: context.app.get('securityGuardLastCheckin'),
-        };
-
-        return context;
-      },
-    ],
+    find: [],
     get: [],
     create: [],
     update: [],

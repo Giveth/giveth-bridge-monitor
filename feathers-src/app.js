@@ -5,21 +5,25 @@ const cors = require('cors');
 const helmet = require('helmet');
 const logger = require('winston');
 
+process.env.NODE_CONFIG_DIR = path.join(__dirname, '../config/');
+
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
 const express = require('@feathersjs/express');
 const socketio = require('@feathersjs/socketio');
 
-
 const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
+const mongoose = require('./mongoose');
+const configureLogger = require('./lib/configureLogger');
 
 const app = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
+app.configure(configureLogger);
 // Enable CORS, security, compression, favicon and body parsing
 app.use(cors());
 app.use(helmet());
@@ -29,6 +33,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
 app.use('/', express.static(app.get('public')));
+
+app.configure(mongoose);
 
 // Set up Plugins and providers
 app.configure(express.rest());

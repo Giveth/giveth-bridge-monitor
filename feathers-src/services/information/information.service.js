@@ -2,8 +2,7 @@
 const createService = require('feathers-memory');
 const hooks = require('./information.hooks');
 
-module.exports = function (app) {
-
+module.exports = app => {
   const options = {
     name: 'information',
     paginate: false,
