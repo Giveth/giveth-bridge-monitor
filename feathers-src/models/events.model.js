@@ -15,7 +15,7 @@ const createModel = app => {
       logIndex: { type: Number, required: true },
       transactionIndex: { type: Number, required: true },
       transactionHash: { type: String, required: true, index: true },
-      blockHash: { type: String, required: true },
+      blockHash: { type: String, required: true, index: true },
       blockNumber: { type: Number, required: true },
       address: { type: String, required: true },
       type: { type: String },
@@ -34,7 +34,7 @@ const createModel = app => {
       },
       processingError: { type: String },
       confirmations: { type: Number, require: true },
-      isHomeEvent: { type: Boolean, default: false },
+      isHomeEvent: { type: Boolean, default: false, index: true },
     },
     {
       timestamp: true,

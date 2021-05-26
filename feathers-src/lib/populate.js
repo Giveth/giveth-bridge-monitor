@@ -13,7 +13,6 @@ const getLastBlock = async (isHome = false) => {
   const opts = {
     paginate: false,
     query: {
-      status: { $ne: EventStatus.PENDING },
       isHomeEvent: isHome,
       $limit: 1,
       $sort: {
@@ -85,35 +84,40 @@ function setLastHomeBlock(blockNumber) {
   if (blockNumber > lastHomeBlock) lastHomeBlock = blockNumber;
 }
 
-let blockNumbersLoaded = false;
-
-function fetchHomeEvents(homeRange) {
+async function fetchHomeEvents(homeRange) {
   const homeContract = getHomeContract();
+  let events = [];
   if (homeRange.fromBlock < homeRange.toBlock) {
     logger.info(`Fetch home events fromBlock ${homeRange.fromBlock} toBlock ${homeRange.toBlock}`);
-    return homeContract.getPastEvents('allEvents', homeRange);
+    try {
+      events = await homeContract.getPastEvents('allEvents', homeRange);
+    } catch (e) {
+      logger.error('Error in fetching home past events', e);
+    }
   }
-  return Promise.resolve([]);
+  return events;
 }
 
-function fetchForeignEvents(foreignRange) {
+async function fetchForeignEvents(foreignRange) {
   const foreignContract = getForeignContract();
+  let events = [];
   if (foreignRange.fromBlock < foreignRange.toBlock) {
     logger.info(
       `Fetch foreign events fromBlock ${foreignRange.fromBlock} toBlock ${foreignRange.toBlock}`,
     );
-    return foreignContract.getPastEvents('allEvents', foreignRange);
+    try {
+      events = await foreignContract.getPastEvents('allEvents', foreignRange);
+    } catch (e) {
+      logger.error('Error in fetching foreign past events', e);
+    }
   }
-  return Promise.resolve([]);
+  return events;
 }
 
 const populate = async () => {
-  if (blockNumbersLoaded === false) {
-    logger.info('Fetch initial block numbers');
-    setLastForeignBlock((await getLastBlock()) + 1);
-    setLastHomeBlock((await getLastBlock(true)) + 1);
-    blockNumbersLoaded = true;
-  }
+  logger.debug('Fetch initial block numbers');
+  setLastForeignBlock((await getLastBlock()) + 1);
+  setLastHomeBlock((await getLastBlock(true)) + 1);
 
   logger.debug('Creating Web3 objects...');
   let homeWeb3;
@@ -224,8 +228,9 @@ const populate = async () => {
 
   app.set('depositor', depositor);
 
-  setLastHomeBlock(homeRange.toBlock + 1);
-  setLastForeignBlock(foreignRange.toBlock + 1);
+  // Always fetch from last event
+  // setLastHomeBlock(homeRange.toBlock + 1);
+  // setLastForeignBlock(foreignRange.toBlock + 1);
 
   // eslint-disable-next-line no-await-in-loop
   while (await processNextWaitingEvent()) {
