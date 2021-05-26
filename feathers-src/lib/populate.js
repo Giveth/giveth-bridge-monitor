@@ -126,7 +126,7 @@ const populate = async () => {
     homeWeb3 = getHomeWeb3();
     foreignWeb3 = getForeignWeb3();
   } catch (error) {
-    logger.error(error);
+    logger.error('error on geting web3:', error);
     return true;
   }
   logger.debug('Success!');
@@ -141,7 +141,7 @@ const populate = async () => {
   try {
     currentHomeBlock = await homeWeb3.eth.getBlockNumber();
   } catch (error) {
-    logger.error(error);
+    logger.error('error in getting last home block number:', error);
     return true;
   }
   logger.debug('Success!');
@@ -151,7 +151,7 @@ const populate = async () => {
   try {
     currentForeignBlock = await foreignWeb3.eth.getBlockNumber();
   } catch (error) {
-    logger.error(error);
+    logger.error('error in getting last foreign block number:', error);
     return true;
   }
   logger.debug('Success!');
@@ -194,7 +194,7 @@ const populate = async () => {
   try {
     depositor = await foreignContract.methods.depositor().call();
   } catch (error) {
-    logger.error(error);
+    logger.error('error in getting depositor:', error);
     return true;
   }
   logger.debug('Success!');
@@ -211,7 +211,7 @@ const populate = async () => {
       ),
     );
   } catch (err) {
-    logger.error(err);
+    logger.error('error in creating home events:', err);
   }
   try {
     await Promise.all(
@@ -223,7 +223,7 @@ const populate = async () => {
       ),
     );
   } catch (err) {
-    logger.error(err);
+    logger.error('error in creating foreign events:', err);
   }
 
   app.set('depositor', depositor);
