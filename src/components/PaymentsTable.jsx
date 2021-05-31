@@ -157,16 +157,14 @@ class PaymentsTable extends Component {
             Header: 'Link',
             width: 80,
             Cell: ({ row }) => {
-              if (
-                this.props.milestones.hasOwnProperty(row._original.event.returnValues.reference)
-              ) {
+              if (this.props.traces.hasOwnProperty(row._original.event.returnValues.reference)) {
                 return (
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={this.props.milestones[row._original.event.returnValues.reference]}
+                    href={this.props.traces[row._original.event.returnValues.reference]}
                   >
-                    Milestone
+                    Trace
                   </a>
                 );
               }
