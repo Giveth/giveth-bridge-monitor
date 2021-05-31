@@ -27,19 +27,19 @@ class DonationLink extends Component {
       .then(donationResp => {
         const dataArrayNum = donationResp.data.length - 1;
         if (dataArrayNum >= 0) {
-          if (donationResp.data[dataArrayNum].ownerType === 'milestone') {
+          if (donationResp.data[dataArrayNum].ownerType === 'trace') {
             client
-              .service('milestones')
+              .service('traces')
               .find({
                 query: {
                   _id: donationResp.data[dataArrayNum].ownerTypeId,
                 },
               })
-              .then(milestoneResp => {
-                const milestone = milestoneResp.data[0];
+              .then(traceResp => {
+                const trace = traceResp.data[0];
                 this.setState({
-                  donationType: 'Milestone ',
-                  donationUrl: `${config.actualDappURL}campaigns/${milestone.campaignId}/milestones/${milestone._id}`,
+                  donationType: 'Trace ',
+                  donationUrl: `${config.actualDappURL}trace/${trace.slug}`,
                 });
               });
           } else if (donationResp.data[dataArrayNum].ownerType === 'campaign') {
@@ -50,9 +50,9 @@ class DonationLink extends Component {
               },
               () => {},
             );
-          } else if (donationResp.data[dataArrayNum].delegateType === 'dac') {
+          } else if (donationResp.data[dataArrayNum].delegateType === 'community') {
             this.setState({
-              donationType: 'DAC ',
+              donationType: 'Community ',
               donationUrl: `${config.actualDappURL}dacs/${donationResp.data[dataArrayNum].delegateTypeId}`,
             });
           } else {

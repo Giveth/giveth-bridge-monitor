@@ -47,7 +47,7 @@ class BridgeMonitor extends Component {
       payments: [],
       info: {},
       recipients: {},
-      milestones: {},
+      traces: {},
     };
     bridgeClient
       .service('information')
@@ -208,20 +208,18 @@ class BridgeMonitor extends Component {
               .then(donation => {
                 if (donation.data && donation.data.length > 0) {
                   this.state.dapp_client
-                    .service('milestones')
+                    .service('traces')
                     .find({
                       query: {
                         _id: donation.data[0].ownerTypeId,
                       },
                     })
                     .then(result => {
-                      const m = { ...this.state.milestones };
+                      const m = { ...this.state.traces };
                       if (result.data.length > 0) {
-                        const milestone = result.data[0];
-                        m[
-                          reference
-                        ] = `${config.actualDappURL}campaigns/${milestone.campaignId}/milestones/${milestone._id}`;
-                        this.setState({ milestones: m });
+                        const trace = result.data[0];
+                        m[reference] = `${config.actualDappURL}trace/${trace.slug}`;
+                        this.setState({ traces: m });
                       }
                     });
                 }
@@ -257,7 +255,7 @@ class BridgeMonitor extends Component {
               <PaymentsTable
                 fetchPayments={this.fetchPayments}
                 recipients={this.state.recipients}
-                milestones={this.state.milestones}
+                traces={this.state.traces}
                 payments={this.state.payments}
                 lastCheckin={this.state.info.securityGuardLastCheckin}
               />
