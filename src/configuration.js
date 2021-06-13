@@ -39,6 +39,16 @@ const configurations = {
     homeNetworkName: 'Mainnet',
     foreignNetworkName: 'Rinkeby',
   },
+  trace: {
+    title: 'trace',
+    feathersConnection: 'https://feathers.bridge.beta.giveth.io/',
+    feathersDappConnection: 'https://feathers.giveth.io/',
+    homeEtherscanURL: 'https://etherscan.io/',
+    foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
+    actualDappURL: 'https://trace.giveth.io/',
+    homeNetworkName: 'Mainnet',
+    foreignNetworkName: 'Rinkeby',
+  },
   // mainnet: {
   //   title: 'mainnet',
   //   feathersConnection: 'https://feathers.mainnet.giveth.io',
