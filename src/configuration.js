@@ -18,6 +18,7 @@ const configurations = {
     actualDappURL: 'https://develop.giveth.io/',
     homeNetworkName: 'Ropsten',
     foreignNetworkName: 'Rinkeby',
+    homeContractAddress: '0x279277482F13aeF92914317a0417DD591145aDc9',
   },
   release: {
     title: 'release',
@@ -38,6 +39,7 @@ const configurations = {
     actualDappURL: 'https://beta.giveth.io/',
     homeNetworkName: 'Mainnet',
     foreignNetworkName: 'Rinkeby',
+    homeContractAddress: '0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7',
   },
   trace: {
     title: 'trace',
@@ -48,6 +50,7 @@ const configurations = {
     actualDappURL: 'https://trace.giveth.io/',
     homeNetworkName: 'Mainnet',
     foreignNetworkName: 'Rinkeby',
+    homeContractAddress: '0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7',
   },
   // mainnet: {
   //   title: 'mainnet',
@@ -605,7 +608,7 @@ config.getContract = context => {
         },
         { anonymous: false, inputs: [], name: 'OwnershipRemoved', type: 'event' },
       ],
-      '0x30f938fed5de6e06a9a7cd2ac3517131c317b1e7',
+      config.homeContractAddress,
     );
   }
   return null;
