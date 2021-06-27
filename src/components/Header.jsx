@@ -4,7 +4,12 @@ import { useWeb3Context } from 'web3-react';
 import Web3Button from './Web3Button';
 
 export default function Header() {
-  const networks = ['Mainnet', 'Ropsten', 'Kovan', 'Rinkeby'];
+  const networks = {
+    1: 'Mainnet',
+    3: 'Ropsten',
+    4: 'Rinkeby',
+    42: 'Kovan',
+  };
   const context = useWeb3Context();
   useEffect(() => {
     context.setFirstValidConnector(['MetaMask']);
@@ -29,7 +34,7 @@ export default function Header() {
             onClick={() => context.setFirstValidConnector(['MetaMask'])}
             text="Connect with metamask"
           />
-          {context.account} {networks[context.networkId - 1]}
+          {context.account} {networks[context.networkId]}
         </span>
       </p>
     </div>

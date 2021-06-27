@@ -16,6 +16,9 @@ const networkNameToID = name => {
     case 'Ropsten':
       return 3;
 
+    case 'Kovan':
+      return 42;
+
     case 'Rinkeby':
       return 4;
 
