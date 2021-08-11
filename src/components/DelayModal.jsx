@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 
 import Web3Button from './Web3Button';
 import config from '../configuration';
+import { sendTx } from '../eip1559';
 
 const style = {
   content: {
@@ -40,9 +41,10 @@ class DelayModal extends React.Component {
           onClick={context => {
             const contract = config.getContract(context);
             if (contract) {
-              contract.methods
-                .delayPayment(this.props.delayId, this.state.seconds)
-                .send({ from: context.account });
+              sendTx(
+                context,
+                contract.methods.delayPayment(this.props.delayId, this.state.seconds),
+              );
             }
             this.props.handleClose();
           }}
