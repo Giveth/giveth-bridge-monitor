@@ -8,6 +8,7 @@ import config from '../configuration';
 import Web3Button from './Web3Button';
 import DelayModal from './DelayModal';
 import DateLabel from './DateLabel';
+import { sendTx } from '../eip1559';
 
 const client = feathers();
 client.configure(
@@ -187,9 +188,7 @@ class PaymentsTable extends Component {
                     onClick={context => {
                       const contract = config.getContract(context);
                       if (contract) {
-                        contract.methods
-                          .disburseAuthorizedPayment(row.ids)
-                          .send({ from: context.account });
+                        sendTx(context, contract.methods.disburseAuthorizedPayment(row.ids));
                       }
                     }}
                     text="Pay"
@@ -243,7 +242,7 @@ class PaymentsTable extends Component {
             onClick={context => {
               const contract = config.getContract(context);
               if (contract) {
-                contract.methods.checkIn().send({ from: context.account });
+                sendTx(context, contract.methods.checkIn());
               }
             }}
             text="Check In"
@@ -260,9 +259,7 @@ class PaymentsTable extends Component {
             onClick={context => {
               const contract = config.getContract(context);
               if (contract) {
-                contract.methods
-                  .disburseAuthorizedPayments(pendingPayments)
-                  .send({ from: context.account });
+                sendTx(context, contract.methods.disburseAuthorizedPayments(pendingPayments));
               }
             }}
             text="Disburse All Payments"
