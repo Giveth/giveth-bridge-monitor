@@ -35,6 +35,7 @@ const createModel = app => {
       processingError: { type: String },
       confirmations: { type: Number, require: true },
       isHomeEvent: { type: Boolean, default: false, index: true },
+      timestamp: { type: Date },
     },
     {
       timestamp: true,

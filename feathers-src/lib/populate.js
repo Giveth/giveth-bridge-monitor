@@ -38,6 +38,9 @@ const processNextWaitingEvent = async () => {
   const query = {
     status: EventStatus.WAITING,
     $sort: {
+      // maybe we get some events from home and blockchain with different blockNumber, so the transactionTime
+      // should be the first important thing for decide what event should process first
+      timestamp: 1,
       isHomeEvent: 1,
       blockNumber: 1,
       transactionIndex: 1,
@@ -112,6 +115,64 @@ async function fetchForeignEvents(foreignRange) {
     }
   }
   return events;
+}
+
+
+/**
+ * fetches the transaction for the given hash in foreign network.
+ *
+ * first checks if the transaction has been saved in db
+ * if it misses, we fetch the block using web3 and save it in db
+ *
+ * if we are currently fetching a given hash, we will not fetch it twice.
+ * instead, we resolve the promise after we fetch the transaction for the hash.
+ *
+ * @param {string} hash the hash to fetch the transaction of
+ * @param {boolean} isHome get transaction of home network
+ */
+const getTransaction = async (hash, isHome = false) => {
+  if (!hash) {
+    throw new errors.NotFound(`Hash value cannot be undefined`);
+  }
+  const Transaction =  app.get('transactionsModel');
+  const query = { hash, isHome };
+  const result = await Transaction.findOne(query);
+  if (result) {
+      return result;
+  }
+
+  const web3 = isHome ? getHomeWeb3() : getForeignWeb3();
+  const tx = await web3.eth.getTransaction(hash);
+  if (!tx) {
+    // sometimes tx is not null but the tx.blockNumber is null (maybe when transaction is not mined already)
+    throw new errors.NotFound(`Not tx found for ${hash}`);
+  }
+  const { from, blockNumber } = tx;
+
+  const model = {
+    hash,
+    from,
+    isHome: !!isHome,
+  };
+
+  // Transaction is mined
+  if (blockNumber) {
+    model.blockNumber = blockNumber;
+
+    const { timestamp } = await web3.eth.getBlock(blockNumber);
+    model.timestamp = new Date(timestamp * 1000);
+    const transaction = new Transaction(model);
+    await transaction.save();
+  }
+  return model;
+};
+
+const createEvent = async (event, isHomeEvent)=>{
+  const {timestamp} = await getTransaction(event.transactionHash, isHomeEvent)
+  await app
+    .service('events')
+    .create({ isHomeEvent, timestamp,  ...event })
+    .catch(err => logger.error(JSON.stringify(event, null, 2), err))
 }
 
 const populate = async () => {
@@ -204,10 +265,7 @@ const populate = async () => {
   try {
     await Promise.all(
       homeEvents.map(event =>
-        app
-          .service('events')
-          .create({ isHomeEvent: true, ...event })
-          .catch(err => logger.error(JSON.stringify(event, null, 2), err)),
+        createEvent(event, true)
       ),
     );
   } catch (err) {
@@ -216,10 +274,7 @@ const populate = async () => {
   try {
     await Promise.all(
       foreignEvents.map(event =>
-        app
-          .service('events')
-          .create({ isHomeEvent: false, ...event })
-          .catch(err => logger.error(JSON.stringify(event, null, 2), err)),
+        createEvent(event, false)
       ),
     );
   } catch (err) {
