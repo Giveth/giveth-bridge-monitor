@@ -43,7 +43,7 @@ const createModel = app => {
   );
   event.index({ transactionHash: 1, event: 1 });
   event.index(
-    { isHomeEvent: 1, blockNumber: 1, transactionIndex: 1, logIndex: 1 },
+    {  blockNumber: 1, transactionIndex: 1, logIndex: 1, timestamp: 1 },
     { unique: true },
   );
 

@@ -41,7 +41,6 @@ const processNextWaitingEvent = async () => {
       // maybe we get some events from home and blockchain with different blockNumber, so the transactionTime
       // should be the first important thing for decide what event should process first
       timestamp: 1,
-      isHomeEvent: 1,
       blockNumber: 1,
       transactionIndex: 1,
       logIndex: 1,
