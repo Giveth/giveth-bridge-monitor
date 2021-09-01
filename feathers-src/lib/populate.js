@@ -1,4 +1,5 @@
 const logger = require('winston');
+const errors = require('@feathersjs/errors');
 const app = require('../app');
 const handleEvent = require('./eventHandler');
 const {
@@ -116,7 +117,6 @@ async function fetchForeignEvents(foreignRange) {
   return events;
 }
 
-
 /**
  * fetches the transaction for the given hash in foreign network.
  *
@@ -133,11 +133,11 @@ const getTransaction = async (hash, isHome = false) => {
   if (!hash) {
     throw new errors.NotFound(`Hash value cannot be undefined`);
   }
-  const Transaction =  app.get('transactionsModel');
+  const Transaction = app.get('transactionsModel');
   const query = { hash, isHome };
   const result = await Transaction.findOne(query);
   if (result) {
-      return result;
+    return result;
   }
 
   const web3 = isHome ? getHomeWeb3() : getForeignWeb3();
@@ -166,13 +166,13 @@ const getTransaction = async (hash, isHome = false) => {
   return model;
 };
 
-const createEvent = async (event, isHomeEvent)=>{
-  const {timestamp} = await getTransaction(event.transactionHash, isHomeEvent)
+const createEvent = async (event, isHomeEvent) => {
+  const { timestamp } = await getTransaction(event.transactionHash, isHomeEvent);
   await app
     .service('events')
-    .create({ isHomeEvent, timestamp,  ...event })
-    .catch(err => logger.error(JSON.stringify(event, null, 2), err))
-}
+    .create({ isHomeEvent, timestamp, ...event })
+    .catch(err => logger.error(JSON.stringify(event, null, 2), err));
+};
 
 const populate = async () => {
   logger.debug('Fetch initial block numbers');
@@ -262,20 +262,12 @@ const populate = async () => {
   logger.debug('Blockchain interaction finished, creating records...');
 
   try {
-    await Promise.all(
-      homeEvents.map(event =>
-        createEvent(event, true)
-      ),
-    );
+    await Promise.all(homeEvents.map(event => createEvent(event, true)));
   } catch (err) {
     logger.error('error in creating home events:', err);
   }
   try {
-    await Promise.all(
-      foreignEvents.map(event =>
-        createEvent(event, false)
-      ),
-    );
+    await Promise.all(foreignEvents.map(event => createEvent(event, false)));
   } catch (err) {
     logger.error('error in creating foreign events:', err);
   }
