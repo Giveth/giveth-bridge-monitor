@@ -6,6 +6,7 @@ const spenders = require('./spenders/spenders.service');
 const depositors = require('./depositors/depositors.service');
 const information = require('./information/information.service');
 const events = require('./events/events.service');
+const transactions = require('./transactions/transactions.service');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = app => {
@@ -17,4 +18,5 @@ module.exports = app => {
   app.configure(depositors);
   app.configure(information);
   app.configure(events);
+  app.configure(transactions);
 };

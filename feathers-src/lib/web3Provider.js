@@ -1,5 +1,5 @@
-const HomeBridgeContract = require('giveth-bridge/build/GivethBridge.json');
-const ForeignBridgeContract = require('giveth-bridge/build/ForeignGivethBridge.json');
+const HomeBridgeContract = require('@giveth/bridge-contract/build/GivethBridge.json');
+const ForeignBridgeContract = require('@giveth/bridge-contract/build/ForeignGivethBridge.json')
 const Web3 = require('web3');
 const logger = require('winston');
 const EventEmitter = require('events');
