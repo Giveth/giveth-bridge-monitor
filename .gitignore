@@ -123,3 +123,4 @@ $RECYCLE.BIN/
 
 # Others
 data/
+config/local.json

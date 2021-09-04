@@ -35,16 +35,14 @@ const createModel = app => {
       processingError: { type: String },
       confirmations: { type: Number, require: true },
       isHomeEvent: { type: Boolean, default: false, index: true },
+      timestamp: { type: Date },
     },
     {
       timestamp: true,
     },
   );
   event.index({ transactionHash: 1, event: 1 });
-  event.index(
-    { isHomeEvent: 1, blockNumber: 1, transactionIndex: 1, logIndex: 1 },
-    { unique: true },
-  );
+  event.index({ blockNumber: 1, transactionIndex: 1, logIndex: 1, timestamp: 1 }, { unique: true });
 
   return mongooseClient.model('events', event);
 };
