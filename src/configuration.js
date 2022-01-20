@@ -30,17 +30,6 @@ const configurations = {
     homeNetworkName: 'Ropsten',
     foreignNetworkName: 'Rinkeby',
   },
-  beta: {
-    title: 'beta',
-    feathersConnection: 'https://feathers.bridge.beta.giveth.io/',
-    feathersDappConnection: 'https://feathers.beta.giveth.io/',
-    homeEtherscanURL: 'https://etherscan.io/',
-    foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
-    actualDappURL: 'https://beta.giveth.io/',
-    homeNetworkName: 'Mainnet',
-    foreignNetworkName: 'Rinkeby',
-    homeContractAddress: '0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7',
-  },
   trace: {
     title: 'trace',
     feathersConnection: 'https://feathers.bridge.giveth.io/',
