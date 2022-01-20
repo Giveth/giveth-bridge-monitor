@@ -43,7 +43,7 @@ const configurations = {
   },
   trace: {
     title: 'trace',
-    feathersConnection: 'https://feathers.bridge.beta.giveth.io/',
+    feathersConnection: 'https://feathers.bridge.giveth.io/',
     feathersDappConnection: 'https://feathers.giveth.io/',
     homeEtherscanURL: 'https://etherscan.io/',
     foreignEtherscanURL: 'https://rinkeby.etherscan.io/',
