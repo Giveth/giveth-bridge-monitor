@@ -222,12 +222,12 @@ const populate = async () => {
 
   const homeRange = {
     fromBlock: lastHomeBlock,
-    toBlock: Math.min(currentHomeBlock, lastHomeBlock + 10000),
+    toBlock: Math.min(currentHomeBlock, +lastHomeBlock + 10000),
   };
 
   const foreignRange = {
     fromBlock: lastForeignBlock,
-    toBlock: Math.min(currentForeignBlock, lastForeignBlock + 10000),
+    toBlock: Math.min(currentForeignBlock, +lastForeignBlock + 10000),
   };
 
   logger.debug('Getting past events...');
