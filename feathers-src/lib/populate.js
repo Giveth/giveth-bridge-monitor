@@ -275,8 +275,8 @@ const populate = async () => {
   app.set('depositor', depositor);
 
   // Always fetch from last event
-  // setLastHomeBlock(homeRange.toBlock + 1);
-  // setLastForeignBlock(foreignRange.toBlock + 1);
+  setLastHomeBlock(homeRange.toBlock + 1);
+  setLastForeignBlock(foreignRange.toBlock + 1);
 
   // eslint-disable-next-line no-await-in-loop
   while (await processNextWaitingEvent()) {
